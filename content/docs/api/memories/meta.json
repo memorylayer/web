@@ -4,6 +4,7 @@
     "get-memory",
     "list-memories",
     "create-memory",
+    "search-memories",
     "update-memory",
     "delete-memory"
   ]

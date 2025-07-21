@@ -1,0 +1,463 @@
+# Search memories
+
+Search memories using semantic similarity and advanced filtering. The search method provides powerful search capabilities with vector similarity and metadata filtering.
+
+## Method
+
+```typescript
+client.memories.search(request: SearchRequest): Promise<SearchResponse>
+```
+
+## Parameters
+
+```typescript
+interface SearchRequest {
+  query: string;                    // Search query text (required)
+  layerId?: string;                // Filter to specific layer
+  limit?: number;                  // Max results (1-100, default: 10)
+  threshold?: number;              // Similarity threshold (0-1, default: 0.7)
+  filters?: SearchFilter[];        // Advanced metadata filters
+  includeEmbeddings?: boolean;     // Include embeddings in response (default: false)
+}
+
+interface SearchFilter {
+  field: string;                   // Metadata field to filter on
+  operator: FilterOperator;        // Filter operator
+  value: string | number | boolean | Array<string | number | boolean>;
+}
+
+type FilterOperator = 
+  | "eq"       // equals
+  | "ne"       // not equals
+  | "gt"       // greater than
+  | "gte"      // greater than or equals
+  | "lt"       // less than
+  | "lte"      // less than or equals
+  | "contains" // string contains (case insensitive)
+  | "in"       // value in array
+  | "exists";  // field exists
+```
+
+## Response
+
+```typescript
+interface SearchResponse {
+  results: SearchResult[];
+  total: number;
+  query: string;
+  processingTime: number;
+  threshold: number;
+}
+
+interface SearchResult {
+  memory: {
+    id: string;
+    layerId: string;
+    content: string;
+    metadata: Record<string, unknown>;
+    createdAt: Date;
+    updatedAt: Date;
+    embedding?: number[];  // Only included if requested
+  };
+  similarity: number;      // Cosine similarity score (0-1)
+  relevanceReason?: string; // Why this memory is relevant
+}
+```
+
+## Basic Examples
+
+### Simple Semantic Search
+
+```typescript
+const response = await client.memories.search({
+  query: 'dark mode preferences'
+});
+
+console.log(`Found ${response.total} memories`);
+response.results.forEach(result => {
+  console.log(`${result.similarity.toFixed(3)}: ${result.memory.content}`);
+});
+```
+
+### Search with Layer Filter
+
+```typescript
+const response = await client.memories.search({
+  query: 'project meetings',
+  layerId: 'work_layer',
+  limit: 5
+});
+
+console.log(`Found ${response.total} work-related memories about meetings`);
+```
+
+### Adjusting Similarity Threshold
+
+```typescript
+// More restrictive search (higher quality results)
+const strictResults = await client.memories.search({
+  query: 'customer feedback',
+  threshold: 0.85  // Only very similar results
+});
+
+// More permissive search (broader results)
+const broadResults = await client.memories.search({
+  query: 'customer feedback',
+  threshold: 0.6   // Include more loosely related results
+});
+```
+
+## Advanced Filtering
+
+### Single Filter
+
+```typescript
+const response = await client.memories.search({
+  query: 'user preferences',
+  filters: [
+    {
+      field: 'source',
+      operator: 'eq',
+      value: 'settings'
+    }
+  ]
+});
+```
+
+### Multiple Filters
+
+```typescript
+const response = await client.memories.search({
+  query: 'technical issues',
+  filters: [
+    {
+      field: 'priority',
+      operator: 'gte',
+      value: 3
+    },
+    {
+      field: 'status',
+      operator: 'in',
+      value: ['open', 'pending']
+    },
+    {
+      field: 'category',
+      operator: 'contains',
+      value: 'bug'
+    }
+  ]
+});
+```
+
+### Numeric Comparisons
+
+```typescript
+const response = await client.memories.search({
+  query: 'performance metrics',
+  filters: [
+    {
+      field: 'score',
+      operator: 'gt',
+      value: 0.8
+    },
+    {
+      field: 'response_time',
+      operator: 'lte',
+      value: 200
+    }
+  ]
+});
+```
+
+### Field Existence Check
+
+```typescript
+const response = await client.memories.search({
+  query: 'tagged content',
+  filters: [
+    {
+      field: 'tags',
+      operator: 'exists',
+      value: true
+    }
+  ]
+});
+```
+
+## Complex Search Examples
+
+### E-commerce Search
+
+```typescript
+// Find product feedback with sentiment analysis
+const productFeedback = await client.memories.search({
+  query: 'product quality issues',
+  layerId: 'customer_feedback',
+  threshold: 0.75,
+  filters: [
+    {
+      field: 'analysis.sentiment',
+      operator: 'eq',
+      value: 'negative'
+    },
+    {
+      field: 'product_category',
+      operator: 'in',
+      value: ['electronics', 'appliances']
+    },
+    {
+      field: 'rating',
+      operator: 'lt',
+      value: 3
+    }
+  ],
+  limit: 20
+});
+```
+
+### Support Ticket Analysis
+
+```typescript
+// Find high-priority unresolved issues
+const urgentIssues = await client.memories.search({
+  query: 'system downtime critical errors',
+  layerId: 'support_tickets',
+  threshold: 0.7,
+  filters: [
+    {
+      field: 'priority',
+      operator: 'eq',
+      value: 'urgent'
+    },
+    {
+      field: 'status',
+      operator: 'ne',
+      value: 'resolved'
+    },
+    {
+      field: 'analysis.topics',
+      operator: 'contains',
+      value: 'system'
+    }
+  ]
+});
+
+console.log('Critical issues requiring attention:');
+urgentIssues.results.forEach(result => {
+  console.log(`[${result.similarity.toFixed(3)}] ${result.memory.content.substring(0, 100)}...`);
+  console.log(`Reason: ${result.relevanceReason}`);
+  console.log('---');
+});
+```
+
+### Research and Knowledge Base
+
+```typescript
+// Find research papers on a specific topic
+const research = await client.memories.search({
+  query: 'machine learning natural language processing',
+  layerId: 'research_papers',
+  threshold: 0.8,
+  filters: [
+    {
+      field: 'publication_year',
+      operator: 'gte',
+      value: 2020
+    },
+    {
+      field: 'peer_reviewed',
+      operator: 'eq',
+      value: true
+    },
+    {
+      field: 'analysis.topics',
+      operator: 'in',
+      value: ['nlp', 'machine learning', 'ai']
+    }
+  ],
+  limit: 10
+});
+```
+
+## Working with Search Results
+
+### Processing Results
+
+```typescript
+const response = await client.memories.search({
+  query: 'user interface feedback',
+  threshold: 0.7
+});
+
+// Group results by similarity score
+const highRelevance = response.results.filter(r => r.similarity >= 0.9);
+const mediumRelevance = response.results.filter(r => r.similarity >= 0.7 && r.similarity < 0.9);
+
+console.log(`High relevance: ${highRelevance.length} results`);
+console.log(`Medium relevance: ${mediumRelevance.length} results`);
+
+// Extract unique topics
+const allTopics = response.results
+  .flatMap(r => r.memory.metadata.analysis?.topics || [])
+  .filter((topic, index, array) => array.indexOf(topic) === index);
+
+console.log('Topics found:', allTopics);
+```
+
+### Including Embeddings
+
+```typescript
+const response = await client.memories.search({
+  query: 'feature requests',
+  includeEmbeddings: true  // Include vector embeddings
+});
+
+// Use embeddings for further analysis or caching
+response.results.forEach(result => {
+  if (result.memory.embedding) {
+    console.log(`Memory ${result.memory.id} has ${result.memory.embedding.length}-dimensional embedding`);
+    // Could cache embeddings for follow-up searches
+  }
+});
+```
+
+## Error Handling
+
+```typescript
+try {
+  const response = await client.memories.search({
+    query: 'test query',
+    threshold: 0.8
+  });
+  
+  if (response.results.length === 0) {
+    console.log('No memories found matching your criteria');
+    console.log('Try lowering the threshold or using a broader query');
+  } else {
+    console.log(`Found ${response.total} relevant memories`);
+  }
+  
+} catch (error) {
+  if (error.message.includes('query must be at least 1 character')) {
+    console.error('Search query cannot be empty');
+  } else if (error.message.includes('limit must be between 1 and 100')) {
+    console.error('Invalid limit specified');
+  } else if (error.message.includes('threshold must be between 0 and 1')) {
+    console.error('Invalid similarity threshold');
+  } else {
+    console.error('Search failed:', error.message);
+  }
+}
+```
+
+## Performance Optimization
+
+### Batch Searches
+
+```typescript
+// For multiple related queries, consider batch processing
+const queries = [
+  'customer complaints',
+  'product feedback',
+  'service issues'
+];
+
+const searchPromises = queries.map(query => 
+  client.memories.search({
+    query,
+    layerId: 'support_data',
+    limit: 5,
+    threshold: 0.8
+  })
+);
+
+const results = await Promise.all(searchPromises);
+results.forEach((response, index) => {
+  console.log(`Query "${queries[index]}": ${response.total} results`);
+});
+```
+
+### Caching Strategy
+
+```typescript
+// Simple in-memory cache for recent searches
+const searchCache = new Map();
+
+async function cachedSearch(searchRequest) {
+  const cacheKey = JSON.stringify(searchRequest);
+  
+  if (searchCache.has(cacheKey)) {
+    console.log('Using cached results');
+    return searchCache.get(cacheKey);
+  }
+  
+  const response = await client.memories.search(searchRequest);
+  searchCache.set(cacheKey, response);
+  
+  // Clear old cache entries (keep last 100)
+  if (searchCache.size > 100) {
+    const firstKey = searchCache.keys().next().value;
+    searchCache.delete(firstKey);
+  }
+  
+  return response;
+}
+```
+
+## Best Practices
+
+### Query Design
+```typescript
+// Good: Specific, descriptive queries
+await client.memories.search({ query: 'user authentication login issues' });
+
+// Less effective: Too broad or vague
+await client.memories.search({ query: 'problems' });
+
+// Good: Include context
+await client.memories.search({ query: 'mobile app crash during checkout process' });
+```
+
+### Threshold Selection
+```typescript
+// Start with default threshold
+let response = await client.memories.search({ query: 'search topic', threshold: 0.7 });
+
+// If too few results, lower threshold
+if (response.total < 3) {
+  response = await client.memories.search({ query: 'search topic', threshold: 0.6 });
+}
+
+// If too many low-quality results, raise threshold  
+if (response.total > 50) {
+  response = await client.memories.search({ query: 'search topic', threshold: 0.8 });
+}
+```
+
+### Layer Organization
+```typescript
+// Organize searches by context
+const userPreferences = await client.memories.search({
+  query: 'dark mode settings',
+  layerId: 'user_preferences'
+});
+
+const supportTickets = await client.memories.search({
+  query: 'dark mode issues',
+  layerId: 'support_tickets'
+});
+```
+
+### Filter Combination
+```typescript
+// Combine semantic search with precise filtering
+const results = await client.memories.search({
+  query: 'product feedback',           // Semantic similarity
+  threshold: 0.7,
+  filters: [                           // Precise filtering
+    { field: 'verified', operator: 'eq', value: true },
+    { field: 'rating', operator: 'lte', value: 2 },
+    { field: 'date', operator: 'gte', value: '2024-01-01' }
+  ]
+});
+``` 

@@ -1,0 +1,282 @@
+---
+title: Search memories
+---
+
+Search memories using semantic similarity and optional metadata filtering. This endpoint provides powerful search capabilities combining vector similarity search with traditional filtering.
+
+## Request
+
+```http
+POST /v1/memories/search
+```
+
+### Request Body
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `query` | string | Yes | - | Search query text for semantic similarity (1-1000 characters) |
+| `layerId` | string | No | - | Filter results to a specific layer |
+| `limit` | integer | No | 10 | Maximum number of results to return (1-100) |
+| `threshold` | number | No | 0.7 | Minimum similarity threshold (0-1) |
+| `filters` | array | No | - | Advanced metadata filters |
+| `includeEmbeddings` | boolean | No | false | Whether to include embeddings in response |
+
+### Advanced Filtering
+
+The `filters` array supports complex metadata filtering with the following operators:
+
+| Operator | Description | Example |
+|----------|-------------|---------|
+| `eq` | Equals | `{"field": "source", "operator": "eq", "value": "chat"}` |
+| `ne` | Not equals | `{"field": "priority", "operator": "ne", "value": "low"}` |
+| `gt` | Greater than | `{"field": "score", "operator": "gt", "value": 0.8}` |
+| `gte` | Greater than or equals | `{"field": "score", "operator": "gte", "value": 0.5}` |
+| `lt` | Less than | `{"field": "age", "operator": "lt", "value": 30}` |
+| `lte` | Less than or equals | `{"field": "age", "operator": "lte", "value": 65}` |
+| `contains` | String contains (case insensitive) | `{"field": "category", "operator": "contains", "value": "tech"}` |
+| `in` | Value in array | `{"field": "status", "operator": "in", "value": ["active", "pending"]}` |
+| `exists` | Field exists | `{"field": "tags", "operator": "exists", "value": true}` |
+
+### Example Request
+
+```bash
+curl -X POST "https://api.memorylayer.dev/v1/memories/search" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "dark mode preferences",
+    "layerId": "user_123",
+    "limit": 5,
+    "threshold": 0.8,
+    "filters": [
+      {
+        "field": "source",
+        "operator": "eq",
+        "value": "preferences"
+      },
+      {
+        "field": "priority",
+        "operator": "gte",
+        "value": 3
+      }
+    ]
+  }'
+```
+
+## Response
+
+### Success Response (200)
+
+```json
+{
+  "success": true,
+  "data": {
+    "results": [
+      {
+        "memory": {
+          "id": "mem_abc123",
+          "layerId": "user_123",
+          "content": "I prefer dark mode in all my applications",
+          "metadata": {
+            "source": "preferences",
+            "priority": 5,
+            "analysis": {
+              "sentiment": "neutral",
+              "intent": "preference",
+              "topics": ["ui", "preferences"]
+            }
+          },
+          "createdAt": "2024-01-15T10:30:00Z",
+          "updatedAt": "2024-01-15T10:30:00Z"
+        },
+        "similarity": 0.9234,
+        "relevanceReason": "Highly similar content and context"
+      }
+    ],
+    "total": 1,
+    "query": "dark mode preferences",
+    "processingTime": 145,
+    "threshold": 0.8
+  },
+  "message": "Found 1 relevant memories"
+}
+```
+
+### Response Fields
+
+#### Result Object
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `memory` | object | Complete memory object (without embedding by default) |
+| `similarity` | number | Cosine similarity score (0-1, higher = more similar) |
+| `relevanceReason` | string | Human-readable explanation of relevance |
+
+#### Data Object
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `results` | array | Array of search results |
+| `total` | number | Total number of results found |
+| `query` | string | The original search query |
+| `processingTime` | number | Search processing time in milliseconds |
+| `threshold` | number | Similarity threshold used |
+
+### Similarity Scoring
+
+- **0.9-1.0**: Highly similar content and context
+- **0.8-0.9**: Similar topics and concepts  
+- **0.7-0.8**: Related content with shared themes
+- **0.6-0.7**: Potentially relevant based on semantic similarity
+
+### Error Responses
+
+#### Bad Request (400)
+```json
+{
+  "success": false,
+  "message": "Invalid search request: query must be at least 1 character"
+}
+```
+
+#### Server Error (500)
+```json
+{
+  "success": false,
+  "message": "OpenAI API key is required for search functionality"
+}
+```
+
+## Examples
+
+### Basic Semantic Search
+```bash
+curl -X POST "https://api.memorylayer.dev/v1/memories/search" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "meeting with John"
+  }'
+```
+
+### Search with Layer Filter
+```bash
+curl -X POST "https://api.memorylayer.dev/v1/memories/search" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "project deadlines",
+    "layerId": "project_alpha",
+    "limit": 10
+  }'
+```
+
+### Advanced Filtered Search
+```bash
+curl -X POST "https://api.memorylayer.dev/v1/memories/search" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "customer feedback",
+    "threshold": 0.6,
+    "filters": [
+      {
+        "field": "source",
+        "operator": "in",
+        "value": ["support", "survey", "review"]
+      },
+      {
+        "field": "sentiment",
+        "operator": "eq",
+        "value": "positive"
+      },
+      {
+        "field": "created_date",
+        "operator": "gte",
+        "value": "2024-01-01"
+      }
+    ]
+  }'
+```
+
+### JavaScript Example
+```javascript
+const searchResponse = await fetch('https://api.memorylayer.dev/v1/memories/search', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    query: 'user interface feedback',
+    layerId: 'product_feedback',
+    limit: 5,
+    threshold: 0.75
+  })
+});
+
+const data = await searchResponse.json();
+if (data.success) {
+  console.log(`Found ${data.data.total} relevant memories`);
+  data.data.results.forEach(result => {
+    console.log(`Similarity: ${result.similarity}`);
+    console.log(`Content: ${result.memory.content}`);
+    console.log(`Reason: ${result.relevanceReason}`);
+  });
+} else {
+  console.error('Search failed:', data.message);
+}
+```
+
+### Python Example
+```python
+import requests
+
+response = requests.post(
+    'https://api.memorylayer.dev/v1/memories/search',
+    headers={
+        'Authorization': 'Bearer YOUR_API_KEY',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'query': 'technical documentation',
+        'layerId': 'docs_layer',
+        'limit': 10,
+        'threshold': 0.7,
+        'filters': [
+            {
+                'field': 'category',
+                'operator': 'eq',
+                'value': 'technical'
+            }
+        ]
+    }
+)
+
+if response.status_code == 200:
+    data = response.json()
+    if data['success']:
+        print(f"Found {data['data']['total']} relevant memories")
+        for result in data['data']['results']:
+            print(f"Similarity: {result['similarity']}")
+            print(f"Content: {result['memory']['content'][:100]}...")
+    else:
+        print(f"Search failed: {data['message']}")
+else:
+    print(f"HTTP Error: {response.status_code}")
+```
+
+## Performance Notes
+
+- **Vector Search**: Leverages HNSW indexing for fast similarity search
+- **Processing Time**: Typically 50-200ms depending on query complexity
+- **Caching**: Query embeddings are generated fresh for each search
+- **Rate Limits**: Subject to standard API rate limits
+
+## Best Practices
+
+1. **Query Quality**: Use descriptive, specific queries for better results
+2. **Threshold Tuning**: Start with 0.7, adjust based on result quality
+3. **Layer Organization**: Use layerId to organize and scope searches
+4. **Filter Combination**: Combine semantic search with metadata filters for precision
+5. **Result Limiting**: Use appropriate limits to balance performance and completeness 
