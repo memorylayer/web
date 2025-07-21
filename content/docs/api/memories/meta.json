@@ -1,0 +1,10 @@
+{
+  "defaultOpen": true,
+  "pages": [
+    "get-memory",
+    "list-memories",
+    "create-memory",
+    "update-memory",
+    "delete-memory"
+  ]
+}

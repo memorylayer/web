@@ -1,0 +1,129 @@
+---
+title: Get memory
+---
+
+Retrieve a specific memory by its ID.
+
+## Request
+
+```http
+GET /v1/memories/{id}
+```
+
+### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string | Yes | The unique identifier of the memory |
+
+### Example Request
+
+```bash
+curl -X GET "https://api.memorylayer.dev/v1/memories/mem_1234567890" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Response
+
+### Success Response (200)
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "REPLACE_THIS_MEMORY_ID",
+    "layerId": "REPLACE_THIS_LAYER_ID",
+    "content": "I prefer dark mode in my applications",
+    "metadata": {
+      "source": "preferences",
+      "analysis": {
+        "sentiment": "neutral",
+        "intent": "preference",
+        "topics": ["ui", "preferences"],
+        "summary": "User interface preference for dark mode",
+        "entities_count": 2,
+        "relationships_count": 1
+      },
+      "processing": {
+        "analyzed_at": "2024-01-15T10:30:00Z",
+        "embedding_model": "text-embedding-3-large",
+        "embedding_dimensions": 1536
+      }
+    },
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z",
+    "embedding": null
+  },
+  "message": "Memory retrieved successfully"
+}
+```
+
+### Error Responses
+
+#### Bad Request (400)
+```json
+{
+  "success": false,
+  "message": "Invalid memory ID: id must be at least 1 character"
+}
+```
+
+#### Not Found (404)
+```json
+{
+  "success": false,
+  "message": "Memory not found"
+}
+```
+
+#### Server Error (500)
+```json
+{
+  "success": false,
+  "message": "Failed to retrieve memory"
+}
+```
+
+## Examples
+
+### Basic Request
+```bash
+curl -X GET "https://api.memorylayer.dev/v1/memories/mem_1234567890" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### JavaScript Example
+```javascript
+const memoryId = "REPLACE_THIS_MEMORY_ID";
+const response = await fetch(`https://api.memorylayer.dev/v1/memories/${memoryId}`, {
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY'
+  }
+});
+
+if (response.ok) {
+  const result = await response.json();
+  console.log('Memory:', result.data);
+} else {
+  console.error('Failed to fetch memory');
+}
+```
+
+### Python Example
+```python
+import requests
+
+memory_id = "REPLACE_THIS_MEMORY_ID"
+headers = {"Authorization": "Bearer YOUR_API_KEY"}
+
+response = requests.get(
+    f"https://api.memorylayer.dev/v1/memories/{memory_id}",
+    headers=headers
+)
+
+if response.status_code == 200:
+    memory = response.json()["data"]
+    print(f"Memory content: {memory['content']}")
+else:
+    print(f"Error: {response.json()['message']}")
+``` 

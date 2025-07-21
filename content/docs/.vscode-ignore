@@ -1,0 +1,2 @@
+# This directory contains documentation content and should not be type-checked by TypeScript
+# See ../tsconfig.json for exclusion configuration 

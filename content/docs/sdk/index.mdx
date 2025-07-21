@@ -1,0 +1,73 @@
+---
+title: SDK
+---
+
+Install the MemoryLayer SDK and start building with memory-powered applications.
+
+## Installation
+
+```bash
+bun add @memorylayer/sdk
+```
+
+## Quick Start
+
+```typescript
+import { createClient } from '@memorylayer/sdk';
+
+// Initialize the client
+const client = createClient({
+  apiKey: process.env.MEMORYLAYER_API_KEY
+});
+
+// Create your first memory
+const memory = await client.memories.create({
+  layerId: "REPLACE_THIS_LAYER_ID",
+  content: 'I prefer dark mode in my applications',
+});
+
+console.log('Memory created:', memory.id);
+```
+
+## Configuration
+
+### Environment Variables
+
+Set these environment variables for easier configuration:
+
+- `MEMORYLAYER_API_KEY`: Your API key for authentication
+
+### Manual Configuration
+
+```typescript
+const client = createClient({
+  apiKey: process.env.MEMORYLAYER_API_KEY,
+});
+```
+
+## Error Handling
+
+Always wrap API calls in try-catch blocks:
+
+```typescript
+try {
+  const memory = await client.memories.create({
+    content: 'My content',
+    layerId: "REPLACE_THIS_LAYER_ID"
+  });
+} catch (error) {
+  console.error('Failed to create memory:', error.message);
+}
+```
+
+## Next Steps
+
+- [Get memory by ID](/docs/sdk/get-memory)
+- [List all memories](/docs/sdk/list-memories)
+- [Create a new memory](/docs/sdk/create-memory)
+- [Update memory](/docs/sdk/update-memory)
+- [Delete memory](/docs/sdk/delete-memory)
+
+## API Reference
+
+The SDK wraps the MemoryLayer REST API. For direct API usage, see the [API Reference](/docs/api). 

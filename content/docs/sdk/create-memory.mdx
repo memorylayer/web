@@ -1,0 +1,153 @@
+# Create memory
+
+Create a new memory with content analysis, embedding generation, and graph storage.
+
+## Method
+
+```typescript
+client.memories.create(input: CreateMemoryInput): Promise<Memory>
+```
+
+## Parameters
+
+```typescript
+interface CreateMemoryInput {
+  content: string;
+  layerId: string;
+  metadata?: Record<string, unknown>;
+}
+```
+
+- `content` (string, required): The text content of the memory
+- `layerId` (string, required): Layer identifier for organizing memories
+- `metadata` (object, optional): Additional metadata (can be empty object)
+
+## Basic Example
+
+```typescript
+const memory = await client.memories.create({
+  layerId: "REPLACE_THIS_LAYER_ID",
+  content: 'I prefer dark mode in my applications',
+});
+
+console.log('Memory created:', memory.id);
+```
+
+## With Metadata
+
+```typescript
+const memory = await client.memories.create({
+  content: 'Meeting with John at 3 PM tomorrow',
+  layerId: "REPLACE_THIS_LAYER_ID",
+  metadata: {
+    type: 'appointment',
+    priority: 'high',
+    participants: ['John']
+  }
+});
+
+console.log('Memory created with metadata:', memory.metadata);
+```
+
+## Response
+
+Returns a complete `Memory` object with automatic analysis:
+
+```typescript
+{
+  id: "REPLACE_THIS_MEMORY_ID",
+  layerId: "REPLACE_THIS_LAYER_ID",
+  content: 'I prefer dark mode in my applications',
+  embedding: [0.123, -0.456, ...], // 1536-dimensional vector
+  metadata: {
+    // Your custom metadata
+    source: 'preferences',
+    
+    // Automatically added analysis
+    analysis: {
+      sentiment: 'neutral',
+      intent: 'preference',
+      topics: ['ui', 'preferences'],
+      summary: 'User interface preference for dark mode',
+      entities_count: 2,
+      relationships_count: 1
+    },
+    processing: {
+      analyzed_at: '2024-01-15T10:30:00Z',
+      embedding_model: 'text-embedding-3-large',
+      embedding_dimensions: 1536
+    }
+  },
+  createdAt: '2024-01-15T10:30:00Z',
+  updatedAt: '2024-01-15T10:30:00Z'
+}
+```
+
+## Processing Details
+
+When you create a memory, the following processing occurs automatically:
+
+1. **Content Analysis**: Extracts sentiment, intent, topics, entities, and relationships
+2. **Embedding Generation**: Creates a 1536-dimensional vector using `text-embedding-3-large`
+3. **Graph Storage**: Stores entities and relationships in the graph database
+4. **Enhanced Metadata**: Adds analysis results and processing information
+
+## Best Practices
+
+### Layer Organization
+
+Use `layerId` to organize memories by user, session, or context:
+
+```typescript
+// User-specific memories
+await client.memories.create({
+  content: 'User prefers dark mode',
+  layerId: "REPLACE_THIS_LAYER_ID"
+});
+
+// Session-specific memories
+await client.memories.create({
+  content: 'Working on authentication feature',
+  layerId: 'REPLACE_THIS_LAYER_ID'
+});
+```
+
+### Rich Metadata
+
+Add structured metadata for better organization:
+
+```typescript
+await client.memories.create({
+  content: 'Bug found in payment processing',
+  layerId: "REPLACE_THIS_LAYER_ID",
+  metadata: {
+    type: 'issue',
+    severity: 'high',
+    component: 'payments',
+    reportedBy: 'USER_ID',
+    timestamp: new Date().toISOString()
+  }
+});
+```
+
+## Error Handling
+
+```typescript
+try {
+  const memory = await client.memories.create({
+    content: 'My important memory',
+    layerId: "REPLACE_THIS_LAYER_ID",
+    metadata: {}
+  });
+  
+  console.log('Memory created:', memory.id);
+} catch (error) {
+  if (error.message.includes('layerId')) {
+    console.error('Layer ID is required');
+  } else if (error.message.includes('content')) {
+    console.error('Content is required and cannot be empty');
+  } else {
+    console.error('Failed to create memory:', error.message);
+  }
+}
+``` 

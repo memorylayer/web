@@ -1,0 +1,94 @@
+# Get memory
+
+Retrieve a specific memory by its ID.
+
+## Method
+
+```typescript
+client.memories.get(id: string): Promise<Memory>
+```
+
+## Parameters
+
+- `id` (string): The unique identifier of the memory to retrieve
+
+## Basic Example
+
+```typescript
+const memory = await client.memories.get("REPLACE_THIS_MEMORY_ID");
+
+console.log('Memory content:', memory.content);
+console.log('Created at:', memory.createdAt);
+console.log('Metadata:', memory.metadata);
+```
+
+## Response
+
+Returns a `Memory` object with the following properties:
+
+```typescript
+interface Memory {
+  id: string;
+  layerId: string;
+  content: string;
+  embedding: number[] | null;
+  metadata: Record<string, unknown>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+```
+
+### Example Response
+
+```typescript
+{
+  id: "REPLACE_THIS_MEMORY_ID",
+  layerId: "REPLACE_THIS_LAYER_ID", 
+  content: "I prefer dark mode in my applications",
+  embedding: [0.123, -0.456, ...], // 1536-dimensional vector
+  metadata: {
+    source: "preferences",
+    analysis: {
+      sentiment: "neutral",
+      intent: "preference", 
+      topics: ["ui", "preferences"],
+      summary: "User interface preference for dark mode",
+      entities_count: 2,
+      relationships_count: 1
+    },
+    processing: {
+      analyzed_at: "2024-01-15T10:30:00Z",
+      embedding_model: "text-embedding-3-large",
+      embedding_dimensions: 1536
+    }
+  },
+  createdAt: "2024-01-15T10:30:00Z",
+  updatedAt: "2024-01-15T10:30:00Z"
+}
+```
+
+## Content Analysis
+
+The returned memory includes automatically analyzed metadata:
+
+- **Sentiment**: Emotional tone ('positive', 'negative', 'neutral')
+- **Intent**: The detected intent of the content
+- **Entities**: Extracted entities (people, places, things, etc.)
+- **Relationships**: Detected relationships between entities  
+- **Topics**: Main topics discussed
+- **Summary**: A brief summary of the content
+
+## Error Handling
+
+```typescript
+try {
+  const memory = await client.memories.get("REPLACE_THIS_MEMORY_ID");
+  console.log('Memory retrieved:', memory.content);
+} catch (error) {
+  if (error.message.includes('404')) {
+    console.log('Memory not found');
+  } else {
+    console.error('Failed to retrieve memory:', error.message);
+  }
+}
+``` 

@@ -1,0 +1,9 @@
+{
+  "title": "Memory Layer",
+  "root": true,
+  "pages": [
+    "index",
+    "sdk",
+    "api"
+  ]
+}

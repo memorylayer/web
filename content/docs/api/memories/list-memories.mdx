@@ -1,0 +1,103 @@
+---
+title: List memories
+---
+
+Retrieve a paginated list of memories with optional filtering.
+
+## Request
+
+```http
+GET /v1/memories
+```
+
+### Query Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `limit` | integer | No | 20 | Number of memories to return (1-100) |
+| `offset` | integer | No | 0 | Number of memories to skip |
+| `layerId` | string | No | - | Filter memories by layer ID |
+
+### Example Request
+
+```bash
+curl -X GET "https://api.memorylayer.dev/v1/memories?limit=10&offset=0&layerId=REPLACE_THIS_LAYER_ID" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Response
+
+### Success Response (200)
+
+```json
+{
+  "success": true,
+  "data": {
+    "memories": [
+      {
+        "id": "REPLACE_THIS_MEMORY_ID",
+        "layerId": "REPLACE_THIS_LAYER_ID",
+        "content": "I prefer dark mode in my applications",
+        "metadata": {
+          "source": "preferences",
+          "analysis": {
+            "sentiment": "neutral",
+            "intent": "preference",
+            "topics": ["ui", "preferences"]
+          }
+        },
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-15T10:30:00Z",
+        "embedding": null
+      }
+    ],
+    "total": 1,
+    "limit": 10,
+    "offset": 0
+  }
+}
+```
+
+### Error Responses
+
+#### Bad Request (400)
+```json
+{
+  "success": false,
+  "message": "Invalid query parameters: limit must be between 1 and 100"
+}
+```
+
+#### Server Error (500)
+```json
+{
+  "success": false,
+  "message": "Failed to retrieve memories"
+}
+```
+
+## Examples
+
+### Get first 10 memories
+```bash
+curl -X GET "https://api.memorylayer.dev/v1/memories?limit=10" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### Filter by layer with pagination
+```bash
+curl -X GET "https://api.memorylayer.dev/v1/memories?layerId=REPLACE_THIS_LAYER_ID&limit=20&offset=20" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### JavaScript Example
+```javascript
+const response = await fetch('https://api.memorylayer.dev/v1/memories?layerId=REPLACE_THIS_LAYER_ID', {
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY'
+  }
+});
+
+const result = await response.json();
+console.log(result.data.memories);
+``` 

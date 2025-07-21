@@ -1,0 +1,102 @@
+---
+title: API
+---
+
+The MemoryLayer API is a RESTful API that enables you to create, retrieve, update, and delete memories programmatically. All API endpoints return JSON responses and use standard HTTP status codes.
+
+## Base URL
+
+```
+https://api.memorylayer.dev/v1
+```
+
+## Authentication
+
+All API requests require authentication using an API key. Include your API key in the request headers:
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+## Request Format
+
+All POST and PATCH requests must include the `Content-Type: application/json` header and have a JSON body.
+
+## Response Format
+
+All API responses follow a consistent format:
+
+```json
+{
+  "success": boolean,
+  "data": object | array | null,
+  "message": string
+}
+```
+
+### Success Response
+```json
+{
+  "success": true,
+  "data": { /* response data */ },
+  "message": "Operation completed successfully"
+}
+```
+
+### Error Response
+```json
+{
+  "success": false,
+  "message": "Error description"
+}
+```
+
+## HTTP Status Codes
+
+- `200` - OK: Request succeeded
+- `201` - Created: Resource created successfully  
+- `400` - Bad Request: Invalid request data
+- `404` - Not Found: Resource not found
+- `500` - Internal Server Error: Server error
+
+## Rate Limiting
+
+API requests are rate limited. Current limits:
+- 1000 requests per hour per API key
+- 100 requests per minute per API key
+
+## Memory Object
+
+A memory object contains the following fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Unique identifier for the memory |
+| `layerId` | string | Layer identifier for memory organization |
+| `content` | string | The text content of the memory |
+| `metadata` | object | Additional metadata and analysis results |
+| `createdAt` | string (ISO 8601) | When the memory was created |
+| `updatedAt` | string (ISO 8601) | When the memory was last updated |
+| `embedding` | number[] \| null | Vector embedding for similarity search |
+
+### Example Memory Object
+
+```json
+{
+  "id": "REPLACE_THIS_MEMORY_ID",
+  "layerId": "REPLACE_THIS_LAYER_ID",
+  "content": "I prefer dark mode in my applications",
+  "metadata": {
+    "source": "preferences",
+    "analysis": {
+      "sentiment": "neutral",
+      "intent": "preference",
+      "topics": ["ui", "preferences"],
+      "summary": "User interface preference for dark mode"
+    }
+  },
+  "createdAt": "2024-01-15T10:30:00Z",
+  "updatedAt": "2024-01-15T10:30:00Z",
+  "embedding": null
+}
+``` 

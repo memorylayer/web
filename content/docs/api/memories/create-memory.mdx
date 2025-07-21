@@ -1,0 +1,196 @@
+---
+title: Create memory
+---
+
+Create a new memory with content analysis, embedding generation, and graph storage.
+
+**Note**: As of the latest version, `layerId` is now required when creating memories.
+
+## Request
+
+```http
+POST /v1/memories
+```
+
+### Request Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `content` | string | Yes | The text content of the memory |
+| `layerId` | string | Yes | Layer identifier for organizing memories |
+| `metadata` | object | Yes | Additional metadata (can be empty object) |
+
+### Example Request
+
+```bash
+curl -X POST "https://api.memorylayer.dev/v1/memories" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "I prefer dark mode in my applications",
+    "layerId": "REPLACE_THIS_LAYER_ID",
+    "metadata": {
+      "source": "preferences",
+      "category": "ui"
+    }
+  }'
+```
+
+## Response
+
+### Success Response (201)
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "REPLACE_THIS_MEMORY_ID",
+    "layerId": "REPLACE_THIS_LAYER_ID",
+    "content": "I prefer dark mode in my applications",
+    "metadata": {
+      "source": "preferences",
+      "category": "ui",
+      "analysis": {
+        "sentiment": "neutral",
+        "intent": "preference",
+        "topics": ["ui", "preferences"],
+        "summary": "User interface preference for dark mode",
+        "entities_count": 2,
+        "relationships_count": 1
+      },
+      "processing": {
+        "analyzed_at": "2024-01-15T10:30:00Z",
+        "embedding_model": "text-embedding-3-large",
+        "embedding_dimensions": 1536
+      }
+    },
+    "embedding": [0.123, -0.456, ...],
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  },
+  "message": "Memory created successfully with analysis and graph storage"
+}
+```
+
+### Error Responses
+
+#### Bad Request (400)
+```json
+{
+  "success": false,
+  "message": "Invalid request data: layerId: Required"
+}
+```
+
+#### Server Error (500)
+```json
+{
+  "success": false,
+  "message": "OpenAI API key is required for memory processing"
+}
+```
+
+or
+
+```json
+{
+  "success": false,
+  "message": "Failed to generate embedding. Please check OpenAI API key and try again."
+}
+```
+
+## Processing Details
+
+When you create a memory, the following processing occurs automatically:
+
+1. **Content Analysis**: Extracts sentiment, intent, topics, entities, and relationships
+2. **Embedding Generation**: Creates a 1536-dimensional vector using `text-embedding-3-large`
+3. **Graph Storage**: Stores entities and relationships in the graph database
+4. **Enhanced Metadata**: Adds analysis results and processing information
+
+## Examples
+
+### Minimal Request
+```bash
+curl -X POST "https://api.memorylayer.dev/v1/memories" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "Remember to buy groceries",
+    "layerId": "REPLACE_THIS_LAYER_ID",
+    "metadata": {}
+  }'
+```
+
+### With Layer and Metadata
+```bash
+curl -X POST "https://api.memorylayer.dev/v1/memories" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "Meeting with John at 3 PM tomorrow",
+    "layerId": "REPLACE_THIS_LAYER_ID",
+    "metadata": {
+      "type": "appointment",
+      "priority": "high",
+      "participants": ["John"]
+    }
+  }'
+```
+
+### JavaScript Example
+```javascript
+const memory = {
+  content: "I prefer dark mode in my applications",
+  layerId: "REPLACE_THIS_LAYER_ID",
+  metadata: {
+    source: "preferences",
+    category: "ui"
+  }
+};
+
+const response = await fetch('https://api.memorylayer.dev/v1/memories', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(memory)
+});
+
+const result = await response.json();
+if (result.success) {
+  console.log('Memory created:', result.data.id);
+} else {
+  console.error('Error:', result.message);
+}
+```
+
+### Python Example
+```python
+import requests
+
+memory_data = {
+    "content": "Remember to call mom on Sunday",
+    "layerId": "REPLACE_THIS_LAYER_ID",
+    "metadata": {
+        "type": "reminder",
+        "priority": "medium"
+    }
+}
+
+response = requests.post(
+    "https://api.memorylayer.dev/v1/memories",
+    headers={
+        "Authorization": "Bearer YOUR_API_KEY",
+        "Content-Type": "application/json"
+    },
+    json=memory_data
+)
+
+if response.status_code == 201:
+    memory = response.json()["data"]
+    print(f"Created memory: {memory['id']}")
+else:
+    print(f"Error: {response.json()['message']}")
+``` 

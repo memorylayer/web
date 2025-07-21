@@ -1,0 +1,142 @@
+# List memories
+
+Retrieve a paginated list of memories with optional filtering.
+
+## Method
+
+```typescript
+client.memories.list(query?: ListMemoriesQuery): Promise<ListMemoriesResponse>
+```
+
+## Parameters
+
+```typescript
+interface ListMemoriesQuery {
+  limit?: number; // 1-100, default: 20
+  offset?: number; // default: 0
+  layerId?: string; // Filter by layer ID
+}
+```
+
+- `limit` (number, optional): Number of memories to return (1-100, default: 20)
+- `offset` (number, optional): Number of memories to skip (default: 0)
+- `layerId` (string, optional): Filter memories by layer ID
+
+## Basic Example
+
+```typescript
+// List all memories (first 20)
+const response = await client.memories.list();
+
+console.log(`Found ${response.data.total} total memories`);
+response.data.memories.forEach(memory => {
+  console.log(`${memory.id}: ${memory.content}`);
+});
+```
+
+## Filtered Example
+
+```typescript
+// List memories for specific layer with pagination
+const response = await client.memories.list({
+  layerId: "REPLACE_THIS_LAYER_ID",
+  limit: 10,
+  offset: 0
+});
+
+console.log(`Found ${response.data.total} memories for layer`);
+response.data.memories.forEach(memory => {
+  console.log(`${memory.id}: ${memory.content}`);
+});
+```
+
+## Response
+
+Returns a `ListMemoriesResponse` object:
+
+```typescript
+interface ListMemoriesResponse {
+  success: true;
+  data: {
+    memories: Memory[];
+    total: number;
+    limit: number;
+    offset: number;
+  };
+}
+```
+
+### Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "memories": [
+      {
+        "id": "REPLACE_THIS_MEMORY_ID",
+        "layerId": "REPLACE_THIS_LAYER_ID",
+        "content": "I prefer dark mode in my applications",
+        "metadata": {
+          "source": "preferences",
+          "analysis": {
+            "sentiment": "neutral",
+            "intent": "preference",
+            "topics": ["ui", "preferences"]
+          }
+        },
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-15T10:30:00Z",
+        "embedding": null
+      }
+    ],
+    "total": 1,
+    "limit": 10,
+    "offset": 0
+  }
+}
+```
+
+## Pagination
+
+Handle large datasets with pagination:
+
+```typescript
+const limit = 20;
+let offset = 0;
+let allMemories = [];
+
+while (true) {
+  const response = await client.memories.list({
+    layerId: "REPLACE_THIS_LAYER_ID",
+    limit,
+    offset
+  });
+
+  allMemories.push(...response.data.memories);
+  
+  // Check if we've retrieved all memories
+  if (response.data.memories.length < limit) {
+    break;
+  }
+  
+  offset += limit;
+}
+
+console.log(`Retrieved ${allMemories.length} total memories`);
+```
+
+## Error Handling
+
+```typescript
+try {
+  const response = await client.memories.list({
+    layerId: "REPLACE_THIS_LAYER_ID",
+    limit: 50
+  });
+  
+  console.log(`Retrieved ${response.data.memories.length} memories`);
+} catch (error) {
+  console.error('Failed to list memories:', error.message);
+}
+``` 

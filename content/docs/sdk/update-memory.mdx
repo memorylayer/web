@@ -1,0 +1,148 @@
+# Update memory
+
+Update an existing memory by its ID. You can update any field except `id`, `createdAt`, and `embedding`.
+
+## Method
+
+```typescript
+client.memories.update(id: string, input: UpdateMemoryInput): Promise<Memory>
+```
+
+## Parameters
+
+- `id` (string, required): The unique identifier of the memory to update
+
+```typescript
+interface UpdateMemoryInput {
+  content?: string;
+  layerId?: string;
+  metadata?: Record<string, unknown>;
+}
+```
+
+- `content` (string, optional): The text content of the memory
+- `layerId` (string, optional): Layer identifier for organizing memories
+- `metadata` (object, optional): Additional metadata
+
+## Basic Example
+
+```typescript
+const updated = await client.memories.update("REPLACE_THIS_MEMORY_ID", {
+  content: 'I prefer dark mode in all my applications'
+});
+
+console.log('Memory updated:', updated.updatedAt);
+```
+
+## Update Metadata
+
+```typescript
+const updated = await client.memories.update("REPLACE_THIS_MEMORY_ID", {
+  metadata: {
+    source: 'preferences',
+    category: 'ui',
+    updated_reason: 'clarification'
+  }
+});
+
+console.log('Updated metadata:', updated.metadata);
+```
+
+## Partial Updates
+
+You can update any combination of fields:
+
+```typescript
+const updated = await client.memories.update("REPLACE_THIS_MEMORY_ID", {
+  content: 'New content',
+  layerId: 'REPLACE_THIS_LAYER_ID',
+  metadata: {
+    source: 'updated',
+    version: 2
+  }
+});
+```
+
+## Response
+
+Returns the updated `Memory` object:
+
+```typescript
+{
+  id: "REPLACE_THIS_MEMORY_ID",
+  layerId: "REPLACE_THIS_LAYER_ID",
+  content: 'I prefer dark mode in all my applications',
+  metadata: {
+    source: 'preferences',
+    category: 'ui',
+    updated_reason: 'clarification'
+  },
+  embedding: [0.123, -0.456, ...],
+  createdAt: '2024-01-15T10:30:00Z',
+  updatedAt: '2024-01-15T12:45:00Z' // Updated timestamp
+}
+```
+
+## Important Notes
+
+- **Partial Updates**: Only the fields you include in the request body will be updated
+- **Metadata Replacement**: The entire `metadata` object is replaced, not merged
+- **Automatic Timestamps**: The `updatedAt` field is automatically set to the current time
+- **Embedding Preservation**: The existing embedding is preserved and not regenerated
+- **Content Analysis**: Content analysis is not re-run on updates
+
+## Preserving Existing Metadata
+
+To add to existing metadata without replacing it, first retrieve the memory:
+
+```typescript
+// Get current memory
+const current = await client.memories.get("REPLACE_THIS_MEMORY_ID");
+
+// Update with merged metadata
+const updated = await client.memories.update("REPLACE_THIS_MEMORY_ID", {
+  metadata: {
+    ...current.metadata,
+    newField: 'new value',
+    lastUpdated: new Date().toISOString()
+  }
+});
+```
+
+## Best Practices
+
+### Version Tracking
+
+Track changes in metadata:
+
+```typescript
+await client.memories.update("REPLACE_THIS_MEMORY_ID", {
+  content: 'Updated content',
+  metadata: {
+    ...existingMetadata,
+    version: (existingMetadata.version || 0) + 1,
+    lastModified: new Date().toISOString(),
+    modifiedBy: 'USER_ID'
+  }
+});
+```
+
+## Error Handling
+
+```typescript
+try {
+  const updated = await client.memories.update("REPLACE_THIS_MEMORY_ID", {
+    content: 'New content'
+  });
+  
+  console.log('Memory updated successfully:', updated.id);
+} catch (error) {
+  if (error.message.includes('404')) {
+    console.error('Memory not found');
+  } else if (error.message.includes('content')) {
+    console.error('Content cannot be empty');
+  } else {
+    console.error('Failed to update memory:', error.message);
+  }
+}
+``` 

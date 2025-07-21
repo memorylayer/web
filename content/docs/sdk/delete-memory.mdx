@@ -1,0 +1,158 @@
+# Delete memory
+
+Delete a memory by its ID. This operation is permanent and cannot be undone.
+
+## Method
+
+```typescript
+client.memories.delete(id: string): Promise<void>
+```
+
+## Parameters
+
+- `id` (string, required): The unique identifier of the memory to delete
+
+## Basic Example
+
+```typescript
+await client.memories.delete("REPLACE_THIS_MEMORY_ID");
+console.log('Memory deleted successfully');
+```
+
+## With Error Handling
+
+```typescript
+try {
+  await client.memories.delete("REPLACE_THIS_MEMORY_ID");
+  console.log('Memory deleted successfully');
+} catch (error) {
+  if (error.message.includes('404')) {
+    console.log('Memory not found');
+  } else {
+    console.error('Failed to delete memory:', error.message);
+  }
+}
+```
+
+## Important Notes
+
+- **Permanent Deletion**: Once deleted, a memory cannot be recovered
+- **Graph Cleanup**: Associated entities and relationships in the graph database are not automatically removed
+- **Cascade Effects**: Deleting a memory does not affect other memories or relationships
+- **Idempotent**: Attempting to delete a non-existent memory returns a 404 error
+
+## Bulk Deletion
+
+Delete multiple memories:
+
+```typescript
+const memoryIds = ["memory_id_1", 'memory_id_2', 'memory_id_3'];
+
+for (const id of memoryIds) {
+  try {
+    await client.memories.delete(id);
+    console.log(`Deleted memory: ${id}`);
+  } catch (error) {
+    console.error(`Failed to delete ${id}:`, error.message);
+  }
+}
+```
+
+## Conditional Deletion
+
+Delete memories based on criteria:
+
+```typescript
+// Get memories to delete
+const response = await client.memories.list({
+  layerId: "REPLACE_THIS_LAYER_ID"
+});
+
+// Delete old memories (example: older than 30 days)
+const thirtyDaysAgo = new Date();
+thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+for (const memory of response.data.memories) {
+  if (memory.createdAt < thirtyDaysAgo) {
+    try {
+      await client.memories.delete(memory.id);
+      console.log(`Deleted old memory: ${memory.id}`);
+    } catch (error) {
+      console.error(`Failed to delete ${memory.id}:`, error.message);
+    }
+  }
+}
+```
+
+## Best Practices
+
+### Safe Deletion Pattern
+
+Always verify before deletion:
+
+```typescript
+async function safeDeleteMemory(id: string) {
+  try {
+    // Verify the memory exists first
+    const memory = await client.memories.get(id);
+    
+    // Optional: Check if it's safe to delete
+    if (memory.metadata?.protected === true) {
+      throw new Error('Cannot delete protected memory');
+    }
+    
+    // Proceed with deletion
+    await client.memories.delete(id);
+    console.log(`Successfully deleted memory: ${id}`);
+    
+  } catch (error) {
+    if (error.message.includes('404')) {
+      console.log('Memory does not exist');
+    } else {
+      console.error('Deletion failed:', error.message);
+      throw error;
+    }
+  }
+}
+```
+
+### Error Handling Best Practice
+
+```typescript
+async function deleteMemory(memoryId: string) {
+  try {
+    await client.memories.delete(memoryId);
+    return { success: true, message: 'Memory deleted successfully' };
+  } catch (error) {
+    console.error('Delete operation failed:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// Usage
+const result = await deleteMemory("REPLACE_THIS_MEMORY_ID");
+if (result.success) {
+  console.log(result.message);
+} else {
+  console.error('Deletion failed:', result.error);
+}
+```
+
+## Error Handling
+
+```typescript
+try {
+  await client.memories.delete("REPLACE_THIS_MEMORY_ID");
+} catch (error) {
+  if (error.message.includes('404')) {
+    // Memory doesn't exist - might already be deleted
+    console.log('Memory not found');
+  } else if (error.message.includes('403')) {
+    // Permission denied
+    console.error('Not authorized to delete this memory');
+  } else {
+    // Other errors
+    console.error('Deletion failed:', error.message);
+  }
+}
+``` 
