@@ -1,90 +1,19 @@
+import satori from "satori";
+import { Resvg } from "@resvg/resvg-js";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { source } from "@/source";
 import type { Route } from "./+types/og";
 
-// Generate SVG string for OG image with web fonts
-function generateOGImageSVG(title: string, subtitle?: string): string {
-  const titleFontSize = 72;
-  const subtitleFontSize = 32;
-  const titleY = subtitle ? 280 : 315; // Center vertically if no subtitle
-  const subtitleY = 340;
+// Cache font data
+let fontData: ArrayBuffer | null = null;
 
-  // Truncate subtitle if it's longer than 45 characters
-  const truncatedSubtitle = subtitle && subtitle.length > 45 
-    ? `${subtitle.substring(0, 45).trim()}...` 
-    : subtitle;
-
-  // Split long titles into multiple lines if needed
-  const maxTitleWidth = 16; // approximate character limit per line
-  const titleLines =
-    title.length > maxTitleWidth
-      ? [title.substring(0, maxTitleWidth), title.substring(maxTitleWidth)]
-      : [title];
-
-  const titleSvg = titleLines
-    .map(
-      (line, index) => `
-    <text 
-      x="600" 
-      y="${titleY + (index * 80) - (titleLines.length > 1 ? 40 : 0)}" 
-      font-family="IBM Plex Mono, 'Courier New', monospace" 
-      font-size="${titleFontSize}" 
-      font-weight="700" 
-      fill="#ffffff" 
-      text-anchor="middle" 
-      dominant-baseline="middle"
-      letter-spacing="-0.02em"
-    >
-      ${line}
-    </text>
-  `,
-    )
-    .join("");
-
-  return `
-    <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <!-- Use Google Fonts for reliable font loading -->
-        <style>
-          @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&amp;display=swap');
-        </style>
-        
-        <!-- Background pattern -->
-        <pattern id="dots" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-          <circle cx="25" cy="25" r="2" fill="#333" opacity="0.1"/>
-          <circle cx="75" cy="75" r="2" fill="#333" opacity="0.1"/>
-        </pattern>
-      </defs>
-      
-      <!-- Background -->
-      <rect width="1200" height="630" fill="#000000"/>
-      
-      <!-- Dot pattern overlay -->
-      <rect width="1200" height="630" fill="url(#dots)"/>
-      
-      <!-- Title(s) -->
-      ${titleSvg}
-      
-      ${
-        truncatedSubtitle
-          ? `
-      <!-- Subtitle -->
-      <text 
-        x="600" 
-        y="${titleLines.length > 1 ? subtitleY + 40 : subtitleY}" 
-        font-family="IBM Plex Mono, 'Courier New', monospace" 
-        font-size="${subtitleFontSize}" 
-        font-weight="400" 
-        fill="#888888" 
-        text-anchor="middle" 
-        dominant-baseline="middle"
-      >
-        ${truncatedSubtitle}
-      </text>
-      `
-          : ""
-      }
-    </svg>
-  `.trim();
+function getFontData(): ArrayBuffer {
+  if (!fontData) {
+    const fontPath = join(process.cwd(), "public/fonts/ibm-plex-mono/IBMPlexMono-Bold.ttf");
+    fontData = readFileSync(fontPath);
+  }
+  return fontData;
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -117,33 +46,171 @@ export async function loader({ request }: Route.LoaderArgs) {
     subtitle = subtitleParam || undefined;
   }
 
-  try {
-    // Generate SVG with web fonts for reliable rendering
-    const svg = generateOGImageSVG(title, subtitle);
+  // Truncate subtitle if it's longer than 80 characters
+  const truncatedSubtitle = subtitle && subtitle.length > 80 
+    ? `${subtitle.substring(0, 80).trim()}...` 
+    : subtitle;
 
-    // Return SVG response with proper headers
-    return new Response(svg, {
+  try {
+    const svg = await satori(
+      <div
+        style={{
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#000000",
+          backgroundImage: `radial-gradient(circle at 25px 25px, rgba(51, 51, 51, 0.1) 2px, transparent 0), 
+                           radial-gradient(circle at 75px 75px, rgba(51, 51, 51, 0.1) 2px, transparent 0)`,
+          backgroundSize: "100px 100px",
+          fontFamily: "IBM Plex Mono",
+          padding: "40px 80px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            maxWidth: "1000px",
+          }}
+        >
+          <h1
+            style={{
+              fontSize: title.length > 20 ? 56 : 72,
+              fontWeight: 700,
+              color: "#ffffff",
+              margin: 0,
+              marginBottom: truncatedSubtitle ? 20 : 0,
+              lineHeight: 1.1,
+              letterSpacing: "-0.02em",
+              textAlign: "center",
+            }}
+          >
+            {title}
+          </h1>
+          {truncatedSubtitle && (
+            <p
+              style={{
+                fontSize: 32,
+                fontWeight: 400,
+                color: "#888888",
+                margin: 0,
+                lineHeight: 1.2,
+                textAlign: "center",
+                maxWidth: "800px",
+              }}
+            >
+              {truncatedSubtitle}
+            </p>
+          )}
+        </div>
+      </div>,
+      {
+        width: 1200,
+        height: 630,
+        fonts: [
+          {
+            name: "IBM Plex Mono",
+            data: getFontData(),
+            weight: 400,
+            style: "normal",
+          },
+          {
+            name: "IBM Plex Mono",
+            data: getFontData(),
+            weight: 700,
+            style: "normal",
+          },
+        ],
+      }
+    );
+
+    // Convert SVG to PNG using resvg
+    const resvg = new Resvg(svg);
+    const pngData = resvg.render();
+    const pngBuffer = pngData.asPng();
+
+    return new Response(pngBuffer, {
       status: 200,
       headers: {
-        "Content-Type": "image/svg+xml; charset=utf-8",
+        "Content-Type": "image/png",
         "Cache-Control": "public, max-age=31536000, immutable",
-        "Content-Disposition": "inline", // Ensure it displays inline, not as download
-        "X-Content-Type-Options": "nosniff",
       },
     });
   } catch (error) {
     console.error("Error generating OG image:", error);
 
-    // Return error SVG
-    const errorSvg = generateOGImageSVG("Memory Layer", "Error generating image");
+    // Generate error SVG
+    const errorSvg = await satori(
+      <div
+        style={{
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#000000",
+          fontFamily: "IBM Plex Mono",
+        }}
+      >
+        <h1
+          style={{
+            fontSize: 72,
+            fontWeight: 700,
+            color: "#ffffff",
+            margin: 0,
+            marginBottom: 20,
+          }}
+        >
+          Memory Layer
+        </h1>
+        <p
+          style={{
+            fontSize: 32,
+            fontWeight: 400,
+            color: "#888888",
+            margin: 0,
+          }}
+        >
+          Error generating image
+        </p>
+      </div>,
+      {
+        width: 1200,
+        height: 630,
+        fonts: [
+          {
+            name: "IBM Plex Mono",
+            data: getFontData(),
+            weight: 400,
+            style: "normal",
+          },
+          {
+            name: "IBM Plex Mono",
+            data: getFontData(),
+            weight: 700,
+            style: "normal",
+          },
+        ],
+      }
+    );
 
-    return new Response(errorSvg, {
+    // Convert error SVG to PNG
+    const errorResvg = new Resvg(errorSvg);
+    const errorPngData = errorResvg.render();
+    const errorPngBuffer = errorPngData.asPng();
+
+    return new Response(errorPngBuffer, {
       status: 500,
       headers: {
-        "Content-Type": "image/svg+xml; charset=utf-8",
+        "Content-Type": "image/png",
         "Cache-Control": "no-cache",
-        "Content-Disposition": "inline",
-        "X-Content-Type-Options": "nosniff",
       },
     });
   }
