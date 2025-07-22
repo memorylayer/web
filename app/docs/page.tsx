@@ -5,7 +5,7 @@ import { executeMdxSync } from "@fumadocs/mdx-remote/client";
 import type { PageTree } from "fumadocs-core/server";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 
-import { FeatureCard, FeatureGrid } from "@/components";
+import { FeatureCard, FeatureGrid, OpenGraph } from "@/components";
 import { shikiThemes } from "@/lib/shiki-themes";
 import {
   RiBrainFill,
@@ -62,8 +62,14 @@ export default function Page(props: Route.ComponentProps) {
       }}
       tree={tree as PageTree.Root}
     >
-      <title>{page.data.title}</title>
-      <meta name="description" content={page.data.description} />
+      <OpenGraph
+        title={page.data.title ?? "Memory Layer"}
+        description={page.data.description ?? "Memory Layer Documentation"}
+        type="article"
+        url={`https://memorylayer.dev${page.url}`}
+        image={`/api/og?docs=${page.url.replace("/docs/", "")}`}
+      />
+
       <DocsPage toc={toc}>
         <DocsTitle>{page.data.title}</DocsTitle>
         <DocsDescription>{page.data.description}</DocsDescription>

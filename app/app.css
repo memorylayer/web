@@ -170,13 +170,13 @@ code,
 [data-codeblock] span,
 [data-codeblock] *,
 /* Target Fumadocs CodeBlock components */
-[data-component="CodeBlock"],
+  [data-component="CodeBlock"],
 [data-component="CodeBlock"] pre,
 [data-component="CodeBlock"] code,
 [data-component="CodeBlock"] span,
 [data-component="CodeBlock"] *,
 /* Target any code-related containers */
-.language-typescript,
+  .language-typescript,
 .language-typescript span,
 .language-typescript *,
 .language-javascript,
@@ -219,7 +219,8 @@ code,
 [class*="language-"] span,
 [class*="language-"] *,
 /* Target any spans within code contexts */
-pre span,
+  pre
+  span,
 code span,
 pre *,
 code * {
