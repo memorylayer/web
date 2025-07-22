@@ -6,6 +6,7 @@ import type { PageTree } from "fumadocs-core/server";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 
 import { FeatureCard, FeatureGrid } from "@/components";
+import { shikiThemes } from "@/lib/shiki-themes";
 import {
   RiBrainFill,
   RiFlashlightFill,
@@ -27,6 +28,10 @@ import type { Route } from "./+types/page";
 
 const compiler = createCompiler({
   development: false,
+  // Configure rehype plugins for code highlighting with One Hunter Vercel themes
+  rehypeCodeOptions: {
+    themes: shikiThemes,
+  },
 });
 
 export async function loader({ params }: Route.LoaderArgs) {

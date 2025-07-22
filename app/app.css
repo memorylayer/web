@@ -146,6 +146,46 @@ main div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not([class*="text-"]),
   font-size: 0.875rem !important; /* Force 14px instead of 18px */
 }
 
+/* Custom font size for code blocks - decrease by 2px from default */
+pre,
+code,
+.shiki,
+.shiki pre,
+.shiki code,
+[data-rehype-pretty-code-fragment],
+[data-rehype-pretty-code-fragment] pre,
+[data-rehype-pretty-code-fragment] code,
+.fd-codeblock,
+.fd-codeblock pre,
+.fd-codeblock code,
+[data-codeblock],
+[data-codeblock] pre,
+[data-codeblock] code,
+/* Target Fumadocs CodeBlock components */
+[data-component="CodeBlock"],
+[data-component="CodeBlock"] pre,
+[data-component="CodeBlock"] code,
+/* Target any code-related containers */
+.language-typescript,
+.language-javascript,
+.language-bash,
+.language-json,
+.language-css,
+.language-html,
+.language-python,
+.language-java,
+.language-go,
+.language-rust,
+.language-swift,
+.language-kotlin,
+.language-php,
+[class*="language-"] {
+  font-size: 0.75rem !important; /* 12px - decreased from 14px by 2px */
+  line-height: 1.4 !important; /* Maintain good readability */
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, "SF Mono", Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
