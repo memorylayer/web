@@ -1,95 +1,11 @@
-import fs from "node:fs";
-import path from "node:path";
 import { source } from "@/source";
 import type { Route } from "./+types/og";
 
-// Generate SVG string for OG image
+// Generate SVG string for OG image with web fonts
 function generateOGImageSVG(title: string, subtitle?: string): string {
   const titleFontSize = 72;
   const subtitleFontSize = 32;
   const titleY = subtitle ? 280 : 315; // Center vertically if no subtitle
-  const subtitleY = 340;
-
-  return `
-    <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <!-- Background pattern -->
-        <pattern id="dots" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-          <circle cx="25" cy="25" r="2" fill="#333" opacity="0.1"/>
-          <circle cx="75" cy="75" r="2" fill="#333" opacity="0.1"/>
-        </pattern>
-      </defs>
-      
-      <!-- Background -->
-      <rect width="1200" height="630" fill="#000000"/>
-      
-      <!-- Dot pattern overlay -->
-      <rect width="1200" height="630" fill="url(#dots)"/>
-      
-      <!-- Main title -->
-      <text 
-        x="600" 
-        y="${titleY}" 
-        font-family="IBM Plex Mono" 
-        font-size="${titleFontSize}" 
-        font-weight="700" 
-        fill="#ffffff" 
-        text-anchor="middle" 
-        dominant-baseline="middle"
-        letter-spacing="-0.02em"
-      >
-        ${title}
-      </text>
-      
-      ${
-        subtitle
-          ? `
-      <!-- Subtitle -->
-      <text 
-        x="600" 
-        y="${subtitleY}" 
-        font-family="IBM Plex Mono" 
-        font-size="${subtitleFontSize}" 
-        font-weight="400" 
-        fill="#888888" 
-        text-anchor="middle" 
-        dominant-baseline="middle"
-      >
-        ${subtitle}
-      </text>
-      `
-          : ""
-      }
-    </svg>
-  `.trim();
-}
-
-// Load font file as base64 for SVG embedding
-async function getFontDataUri(fontPath: string): Promise<string> {
-  try {
-    const fullPath = path.join(process.cwd(), "public", fontPath);
-    const fontData = fs.readFileSync(fullPath);
-    const base64Font = fontData.toString("base64");
-    return `data:font/truetype;charset=utf-8;base64,${base64Font}`;
-  } catch (_error) {
-    console.warn(`Could not load font: ${fontPath}`);
-    return "";
-  }
-}
-
-// Enhanced SVG with embedded fonts for reliable font rendering
-async function generateOGImageSVGWithFonts(
-  title: string,
-  subtitle?: string,
-): Promise<string> {
-  const [regularFontUri, boldFontUri] = await Promise.all([
-    getFontDataUri("fonts/ibm-plex-mono/IBMPlexMono-Regular.ttf"),
-    getFontDataUri("fonts/ibm-plex-mono/IBMPlexMono-Bold.ttf"),
-  ]);
-
-  const titleFontSize = 72;
-  const subtitleFontSize = 32;
-  const titleY = subtitle ? 280 : 315;
   const subtitleY = 340;
 
   // Split long titles into multiple lines if needed
@@ -105,7 +21,7 @@ async function generateOGImageSVGWithFonts(
     <text 
       x="600" 
       y="${titleY + (index * 80) - (titleLines.length > 1 ? 40 : 0)}" 
-      font-family="IBM Plex Mono" 
+      font-family="IBM Plex Mono, 'Courier New', monospace" 
       font-size="${titleFontSize}" 
       font-weight="700" 
       fill="#ffffff" 
@@ -122,30 +38,10 @@ async function generateOGImageSVGWithFonts(
   return `
     <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        ${
-          regularFontUri
-            ? `
+        <!-- Use Google Fonts for reliable font loading -->
         <style>
-          @font-face {
-            font-family: 'IBM Plex Mono';
-            font-weight: 400;
-            src: url('${regularFontUri}') format('truetype');
-          }
-        </style>`
-            : ""
-        }
-        ${
-          boldFontUri
-            ? `
-        <style>
-          @font-face {
-            font-family: 'IBM Plex Mono';
-            font-weight: 700;
-            src: url('${boldFontUri}') format('truetype');
-          }
-        </style>`
-            : ""
-        }
+          @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&amp;display=swap');
+        </style>
         
         <!-- Background pattern -->
         <pattern id="dots" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
@@ -170,7 +66,7 @@ async function generateOGImageSVGWithFonts(
       <text 
         x="600" 
         y="${titleLines.length > 1 ? subtitleY + 40 : subtitleY}" 
-        font-family="IBM Plex Mono" 
+        font-family="IBM Plex Mono, 'Courier New', monospace" 
         font-size="${subtitleFontSize}" 
         font-weight="400" 
         fill="#888888" 
@@ -217,26 +113,32 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 
   try {
-    // Generate SVG with embedded fonts for reliable rendering
-    const svg = await generateOGImageSVGWithFonts(title, subtitle);
+    // Generate SVG with web fonts for reliable rendering
+    const svg = generateOGImageSVG(title, subtitle);
 
-    // Return SVG response
+    // Return SVG response with proper headers
     return new Response(svg, {
+      status: 200,
       headers: {
-        "Content-Type": "image/svg+xml",
+        "Content-Type": "image/svg+xml; charset=utf-8",
         "Cache-Control": "public, max-age=31536000, immutable",
+        "Content-Disposition": "inline", // Ensure it displays inline, not as download
+        "X-Content-Type-Options": "nosniff",
       },
     });
   } catch (error) {
     console.error("Error generating OG image:", error);
 
-    // Fallback to simple SVG without embedded fonts
-    const fallbackSvg = generateOGImageSVG(title, subtitle);
+    // Return error SVG
+    const errorSvg = generateOGImageSVG("Memory Layer", "Error generating image");
 
-    return new Response(fallbackSvg, {
+    return new Response(errorSvg, {
+      status: 500,
       headers: {
-        "Content-Type": "image/svg+xml",
-        "Cache-Control": "public, max-age=31536000, immutable",
+        "Content-Type": "image/svg+xml; charset=utf-8",
+        "Cache-Control": "no-cache",
+        "Content-Disposition": "inline",
+        "X-Content-Type-Options": "nosniff",
       },
     });
   }
