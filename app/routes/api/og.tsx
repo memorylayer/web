@@ -8,6 +8,11 @@ function generateOGImageSVG(title: string, subtitle?: string): string {
   const titleY = subtitle ? 280 : 315; // Center vertically if no subtitle
   const subtitleY = 340;
 
+  // Truncate subtitle if it's longer than 45 characters
+  const truncatedSubtitle = subtitle && subtitle.length > 45 
+    ? `${subtitle.substring(0, 45).trim()}...` 
+    : subtitle;
+
   // Split long titles into multiple lines if needed
   const maxTitleWidth = 16; // approximate character limit per line
   const titleLines =
@@ -60,7 +65,7 @@ function generateOGImageSVG(title: string, subtitle?: string): string {
       ${titleSvg}
       
       ${
-        subtitle
+        truncatedSubtitle
           ? `
       <!-- Subtitle -->
       <text 
@@ -73,7 +78,7 @@ function generateOGImageSVG(title: string, subtitle?: string): string {
         text-anchor="middle" 
         dominant-baseline="middle"
       >
-        ${subtitle}
+        ${truncatedSubtitle}
       </text>
       `
           : ""
