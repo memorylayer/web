@@ -1,27 +1,39 @@
-import satori from "satori";
-import { Resvg } from "@resvg/resvg-js";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { source } from "@/source";
+import { Resvg } from "@resvg/resvg-js";
+import satori from "satori";
 import type { Route } from "./+types/og";
 
-// Cache font data
+// Cache font and background image data
 let fontData: ArrayBuffer | null = null;
+let backgroundImageBase64: string | null = null;
 
 function getFontData(): ArrayBuffer {
   if (!fontData) {
-    const fontPath = join(process.cwd(), "public/fonts/ibm-plex-mono/IBMPlexMono-Bold.ttf");
+    const fontPath = join(
+      process.cwd(),
+      "public/fonts/ibm-plex-mono/IBMPlexMono-Bold.ttf",
+    );
     fontData = readFileSync(fontPath);
   }
   return fontData;
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const url = new URL(request.url);
-  const titleParam = url.searchParams.get("title");
-  const subtitleParam = url.searchParams.get("subtitle");
-  const docsPath = url.searchParams.get("docs");
+function getBackgroundImage(): string {
+  if (!backgroundImageBase64) {
+    const imagePath = join(process.cwd(), "public/og-background.png");
+    const imageBuffer = readFileSync(imagePath);
+    backgroundImageBase64 = `data:image/png;base64,${imageBuffer.toString("base64")}`;
+  }
+  return backgroundImageBase64;
+}
 
+function getTitleAndSubtitle(
+  titleParam: string | null,
+  subtitleParam: string | null,
+  docsPath: string | null,
+): { title: string; subtitle: string | undefined } {
   let title = "Memory Layer";
   let subtitle: string | undefined = "Your AI's missing memory layer";
 
@@ -46,91 +58,192 @@ export async function loader({ request }: Route.LoaderArgs) {
     subtitle = subtitleParam || undefined;
   }
 
+  return { title, subtitle };
+}
+
+function createMainSVG(
+  title: string,
+  truncatedSubtitle: string | undefined,
+  docsPath: string | null,
+) {
+  return (
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        justifyContent: "space-between",
+        backgroundImage: `url(${getBackgroundImage()})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        fontFamily: "IBM Plex Mono",
+        padding: "80px",
+        position: "relative",
+      }}
+    >
+      {/* Top left branding */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+        }}
+      >
+        {docsPath && (
+          <div
+            style={{
+              fontSize: 16,
+              fontWeight: 400,
+              color: "#BBF451",
+              letterSpacing: "0.05em",
+              opacity: 0.8,
+              marginBottom: "8px",
+            }}
+          >
+            Documentation
+          </div>
+        )}
+
+        <div
+          style={{
+            fontSize: 32,
+            fontWeight: 400,
+            color: "#ffffff",
+            letterSpacing: "0.1em",
+          }}
+        >
+          Memory Layer
+        </div>
+      </div>
+
+      {/* Bottom left main content */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          maxWidth: "800px",
+        }}
+      >
+        <h1
+          style={{
+            fontSize: title.length > 25 ? 52 : title.length > 15 ? 68 : 76,
+            fontWeight: 700,
+            color: "#ffffff",
+            margin: 0,
+            marginBottom: truncatedSubtitle ? 32 : 0,
+            lineHeight: 1.1,
+            letterSpacing: "-0.02em",
+            textShadow: "0 4px 8px rgba(0, 0, 0, 0.5)",
+          }}
+        >
+          {title}
+        </h1>
+        {truncatedSubtitle && (
+          <p
+            style={{
+              fontSize: 28,
+              fontWeight: 400,
+              color: "#ffffff",
+              margin: 0,
+              lineHeight: 1.3,
+              maxWidth: "600px",
+              opacity: 0.9,
+              textShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            {truncatedSubtitle}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function createErrorSVG() {
+  return (
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#000000",
+        fontFamily: "IBM Plex Mono",
+      }}
+    >
+      <h1
+        style={{
+          fontSize: 72,
+          fontWeight: 700,
+          color: "#ffffff",
+          margin: 0,
+          marginBottom: 20,
+        }}
+      >
+        Memory Layer
+      </h1>
+      <p
+        style={{
+          fontSize: 32,
+          fontWeight: 400,
+          color: "#BBF451",
+          margin: 0,
+        }}
+      >
+        Error generating image
+      </p>
+    </div>
+  );
+}
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const url = new URL(request.url);
+  const titleParam = url.searchParams.get("title");
+  const subtitleParam = url.searchParams.get("subtitle");
+  const docsPath = url.searchParams.get("docs");
+
+  const { title, subtitle } = getTitleAndSubtitle(
+    titleParam,
+    subtitleParam,
+    docsPath,
+  );
+
   // Truncate subtitle if it's longer than 80 characters
-  const truncatedSubtitle = subtitle && subtitle.length > 80 
-    ? `${subtitle.substring(0, 80).trim()}...` 
-    : subtitle;
+  const truncatedSubtitle =
+    subtitle && subtitle.length > 80
+      ? `${subtitle.substring(0, 80).trim()}...`
+      : subtitle;
+
+  const fontConfig = [
+    {
+      name: "IBM Plex Mono",
+      data: getFontData(),
+      weight: 400 as const,
+      style: "normal" as const,
+    },
+    {
+      name: "IBM Plex Mono",
+      data: getFontData(),
+      weight: 700 as const,
+      style: "normal" as const,
+    },
+  ];
 
   try {
     const svg = await satori(
-      <div
-        style={{
-          height: "100%",
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#000000",
-          backgroundImage: `radial-gradient(circle at 25px 25px, rgba(51, 51, 51, 0.1) 2px, transparent 0), 
-                           radial-gradient(circle at 75px 75px, rgba(51, 51, 51, 0.1) 2px, transparent 0)`,
-          backgroundSize: "100px 100px",
-          fontFamily: "IBM Plex Mono",
-          padding: "40px 80px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            maxWidth: "1000px",
-          }}
-        >
-          <h1
-            style={{
-              fontSize: title.length > 20 ? 56 : 72,
-              fontWeight: 700,
-              color: "#ffffff",
-              margin: 0,
-              marginBottom: truncatedSubtitle ? 20 : 0,
-              lineHeight: 1.1,
-              letterSpacing: "-0.02em",
-              textAlign: "center",
-            }}
-          >
-            {title}
-          </h1>
-          {truncatedSubtitle && (
-            <p
-              style={{
-                fontSize: 32,
-                fontWeight: 400,
-                color: "#888888",
-                margin: 0,
-                lineHeight: 1.2,
-                textAlign: "center",
-                maxWidth: "800px",
-              }}
-            >
-              {truncatedSubtitle}
-            </p>
-          )}
-        </div>
-      </div>,
+      createMainSVG(title, truncatedSubtitle, docsPath),
       {
         width: 1200,
         height: 630,
-        fonts: [
-          {
-            name: "IBM Plex Mono",
-            data: getFontData(),
-            weight: 400,
-            style: "normal",
-          },
-          {
-            name: "IBM Plex Mono",
-            data: getFontData(),
-            weight: 700,
-            style: "normal",
-          },
-        ],
-      }
+        fonts: fontConfig,
+      },
     );
 
-    // Convert SVG to PNG using resvg
     const resvg = new Resvg(svg);
     const pngData = resvg.render();
     const pngBuffer = pngData.asPng();
@@ -145,63 +258,12 @@ export async function loader({ request }: Route.LoaderArgs) {
   } catch (error) {
     console.error("Error generating OG image:", error);
 
-    // Generate error SVG
-    const errorSvg = await satori(
-      <div
-        style={{
-          height: "100%",
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#000000",
-          fontFamily: "IBM Plex Mono",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: 72,
-            fontWeight: 700,
-            color: "#ffffff",
-            margin: 0,
-            marginBottom: 20,
-          }}
-        >
-          Memory Layer
-        </h1>
-        <p
-          style={{
-            fontSize: 32,
-            fontWeight: 400,
-            color: "#888888",
-            margin: 0,
-          }}
-        >
-          Error generating image
-        </p>
-      </div>,
-      {
-        width: 1200,
-        height: 630,
-        fonts: [
-          {
-            name: "IBM Plex Mono",
-            data: getFontData(),
-            weight: 400,
-            style: "normal",
-          },
-          {
-            name: "IBM Plex Mono",
-            data: getFontData(),
-            weight: 700,
-            style: "normal",
-          },
-        ],
-      }
-    );
+    const errorSvg = await satori(createErrorSVG(), {
+      width: 1200,
+      height: 630,
+      fonts: fontConfig,
+    });
 
-    // Convert error SVG to PNG
     const errorResvg = new Resvg(errorSvg);
     const errorPngData = errorResvg.render();
     const errorPngBuffer = errorPngData.asPng();
