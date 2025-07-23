@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { source } from "@/source";
 import { Resvg } from "@resvg/resvg-js";
 import satori from "satori";
-import type { Route } from "./+types/og";
+import type { Route } from "./+types/og-image";
 
 // Cache font and background image data
 let fontData: ArrayBuffer | null = null;
@@ -276,4 +276,4 @@ export async function loader({ request }: Route.LoaderArgs) {
       },
     });
   }
-}
+} 

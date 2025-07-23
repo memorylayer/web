@@ -67,7 +67,7 @@ export default function Page(props: Route.ComponentProps) {
         description={page.data.description ?? "Memory Layer Documentation"}
         type="article"
         url={`https://memorylayer.dev${page.url}`}
-        image={`/api/og?docs=${page.url.replace("/docs/", "")}`}
+        image={`/api/og-image?docs=${page.url.replace("/docs/", "")}`}
       />
 
       <DocsPage toc={toc}>

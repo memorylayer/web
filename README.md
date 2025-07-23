@@ -15,13 +15,13 @@ This app includes automatic OG (Open Graph) image generation using Satori. OG im
 
 #### For docs content:
 ```
-/api/og?docs=api/memories/create-memory
+/api/og-image?docs=api/memories/create-memory
 ```
 
 #### For other pages:
 ```
-/api/og?title=About&subtitle=Learn about Memory Layer
-/api/og?title=Privacy Policy&subtitle=Data handling and privacy
+/api/og-image?title=About&subtitle=Learn about Memory Layer
+/api/og-image?title=Privacy Policy&subtitle=Data handling and privacy
 ```
 
 #### Using the OpenGraph component:

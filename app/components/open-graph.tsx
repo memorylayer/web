@@ -40,7 +40,7 @@ export function generateOGImageUrl(title: string, subtitle?: string): string {
   if (subtitle) {
     params.set("subtitle", subtitle);
   }
-  return `/api/og?${params.toString()}`;
+  return `/api/og-image?${params.toString()}`;
 }
 
 /**
@@ -186,5 +186,5 @@ export function OpenGraph({
  *   alternateLocales={["es_ES", "fr_FR"]}
  * />
  *
- * Note: OG images are automatically generated at /api/og
+ * Note: OG images are automatically generated at /api/og-image
  */
