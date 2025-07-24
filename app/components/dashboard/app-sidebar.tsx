@@ -15,9 +15,17 @@ import {
   IconSettings,
   IconUsers,
 } from "@tabler/icons-react";
+
+import {
+  RiNodeTree as GraphIcon,
+  RiBrainFill as BrainIcon,
+  RiDashboardFill as DashboardIcon,
+  RiAedFill as MemoryUsageIcon,
+  RiChatAiFill as ChatIcon,
+} from "@remixicon/react";
+
 import type * as React from "react";
 
-import { NavDocuments } from "@/components/dashboard/nav-documents";
 import { NavMain } from "@/components/dashboard/nav-main";
 import { NavSecondary } from "@/components/dashboard/nav-secondary";
 import { NavUser } from "@/components/dashboard/nav-user";
@@ -41,27 +49,27 @@ const data = {
     {
       title: "Dashboard",
       url: "#",
-      icon: IconDashboard,
+      icon: DashboardIcon,
     },
     {
-      title: "Lifecycle",
+      title: "Memories",
       url: "#",
-      icon: IconListDetails,
+      icon: BrainIcon,
     },
     {
-      title: "Analytics",
+      title: "Memory Graph",
       url: "#",
-      icon: IconChartBar,
+      icon: GraphIcon,
     },
     {
-      title: "Projects",
+      title: "Memory Usage",
       url: "#",
-      icon: IconFolder,
+      icon: MemoryUsageIcon,
     },
     {
-      title: "Team",
+      title: "Memory Playground",
       url: "#",
-      icon: IconUsers,
+      icon: ChatIcon,
     },
   ],
   navClouds: [
@@ -129,23 +137,23 @@ const data = {
       icon: IconSearch,
     },
   ],
-  documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: IconDatabase,
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: IconReport,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: IconFileWord,
-    },
-  ],
+  // documents: [
+  //   {
+  //     name: "Team",
+  //     url: "#",
+  //     icon: IconDatabase,
+  //   },
+  //   {
+  //     name: "Plans",
+  //     url: "#",
+  //     icon: IconReport,
+  //   },
+  //   {
+  //     name: "Billing",
+  //     url: "#",
+  //     icon: IconFileWord,
+  //   },
+  // ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -168,7 +176,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
+        {/* <NavDocuments items={data.documents} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
