@@ -26,7 +26,7 @@ export default function Login() {
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          <Auth 
+          <Auth
             title="Sign in to continue"
             className="w-full"
             onSuccess={handleAuthSuccess}
@@ -35,4 +35,4 @@ export default function Login() {
       </main>
     </div>
   );
-} 
+}
