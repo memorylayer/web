@@ -4,61 +4,93 @@
 @import "fumadocs-openapi/css/preset.css";
 @import "tw-animate-css";
 
-/* Local font face declarations for Plus Jakarta Sans and Space Mono */
+/* Local font face declarations for Geist and Geist Mono */
 @font-face {
-  font-family: 'Plus Jakarta Sans';
-  src: url('/fonts/plus-jakarta-sans/PlusJakartaSans-VariableFont_wght.ttf') format('truetype');
-  font-weight: 200 800;
+  font-family: 'Geist';
+  src: url('/fonts/geist/Geist-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Plus Jakarta Sans';
-  src: url('/fonts/plus-jakarta-sans/PlusJakartaSans-Italic-VariableFont_wght.ttf') format('truetype');
-  font-weight: 200 800;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Space Mono';
-  src: url('/fonts/space-mono/SpaceMono-Regular.ttf') format('truetype');
+  font-family: 'Geist';
+  src: url('/fonts/geist/static/Geist-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Space Mono';
-  src: url('/fonts/space-mono/SpaceMono-Italic.ttf') format('truetype');
-  font-weight: 400;
-  font-style: italic;
+  font-family: 'Geist';
+  src: url('/fonts/geist/static/Geist-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Space Mono';
-  src: url('/fonts/space-mono/SpaceMono-Bold.ttf') format('truetype');
+  font-family: 'Geist';
+  src: url('/fonts/geist/static/Geist-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist/static/Geist-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Space Mono';
-  src: url('/fonts/space-mono/SpaceMono-BoldItalic.ttf') format('truetype');
+  font-family: 'Geist Mono';
+  src: url('/fonts/geist-mono/GeistMono-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/geist-mono/static/GeistMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/geist-mono/static/GeistMono-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/geist-mono/static/GeistMono-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/geist-mono/static/GeistMono-Bold.ttf') format('truetype');
   font-weight: 700;
-  font-style: italic;
+  font-style: normal;
   font-display: swap;
 }
 
 @custom-variant dark (&:is(.dark *));
 
-/* Font configuration with Plus Jakarta Sans as sans and Space Mono as mono */
+/* Font configuration with Geist as sans and Geist Mono as mono */
 @theme {
-  --font-family-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  --font-family-mono: "Space Mono", ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-family-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-family-mono: "Geist Mono", ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
   /* Custom font sizes - decreased by 2px each, with 14px as default */
   --text-xs: 0.625rem; /* 10px (was 12px) */
@@ -93,7 +125,7 @@
 body,
 html,
 * {
-  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji" !important;
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji" !important;
 }
 
 /* Force 14px font size in Fumadocs components and MDX content */
@@ -271,7 +303,7 @@ pre *,
 code * {
   font-size: 0.8125rem !important; /* 13px */
   line-height: 1.4 !important; /* Maintain good readability */
-  font-family: "Space Mono", ui-monospace, SFMono-Regular, "SF Mono", Monaco,
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, "SF Mono", Monaco,
     Consolas, "Liberation Mono", "Courier New", monospace !important;
 }
 
