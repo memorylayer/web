@@ -5,7 +5,7 @@ import { executeMdxSync } from "@fumadocs/mdx-remote/client";
 import type { PageTree } from "fumadocs-core/server";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 
-import { FeatureCard, FeatureGrid, OpenGraph } from "@/components";
+import { FeatureCard, FeatureGrid, OpenGraph, ThemeToggle } from "@/components";
 import { shikiThemes } from "@/lib/shiki-themes";
 import {
   RiBrainFill,

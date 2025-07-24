@@ -1,5 +1,7 @@
+import { useSystemTheme } from "@/hooks/use-system-theme";
 import { ReactRouterProvider } from "fumadocs-core/framework/react-router";
 import { RootProvider } from "fumadocs-ui/provider/base";
+import { ThemeProvider } from "next-themes";
 import {
   Link,
   Links,
@@ -14,6 +16,11 @@ import "./app.css";
 
 export const links: Route.LinksFunction = () => [];
 
+function ThemeWrapper({ children }: { children: React.ReactNode }) {
+  useSystemTheme();
+  return <>{children}</>;
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -25,7 +32,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="flex flex-col min-h-screen font-mono">
         <ReactRouterProvider>
-          <RootProvider>{children}</RootProvider>
+          <RootProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem={true}
+              disableTransitionOnChange={false}
+            >
+              <ThemeWrapper>{children}</ThemeWrapper>
+            </ThemeProvider>
+          </RootProvider>
         </ReactRouterProvider>
         <ScrollRestoration />
         <Scripts />

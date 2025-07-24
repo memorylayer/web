@@ -1,4 +1,4 @@
-import { OpenGraph } from "@/components";
+import { OpenGraph, ThemeToggle } from "@/components";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { Link } from "react-router";
 import type { Route } from "./+types/home";

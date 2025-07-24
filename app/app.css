@@ -6,80 +6,81 @@
 
 /* Local font face declarations for Geist and Geist Mono */
 @font-face {
-  font-family: 'Geist';
-  src: url('/fonts/geist/Geist-VariableFont_wght.ttf') format('truetype');
+  font-family: "Geist";
+  src: url("/fonts/geist/Geist-VariableFont_wght.ttf") format("truetype");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Geist';
-  src: url('/fonts/geist/static/Geist-Regular.ttf') format('truetype');
+  font-family: "Geist";
+  src: url("/fonts/geist/static/Geist-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Geist';
-  src: url('/fonts/geist/static/Geist-Medium.ttf') format('truetype');
+  font-family: "Geist";
+  src: url("/fonts/geist/static/Geist-Medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Geist';
-  src: url('/fonts/geist/static/Geist-SemiBold.ttf') format('truetype');
+  font-family: "Geist";
+  src: url("/fonts/geist/static/Geist-SemiBold.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Geist';
-  src: url('/fonts/geist/static/Geist-Bold.ttf') format('truetype');
+  font-family: "Geist";
+  src: url("/fonts/geist/static/Geist-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Geist Mono';
-  src: url('/fonts/geist-mono/GeistMono-VariableFont_wght.ttf') format('truetype');
+  font-family: "Geist Mono";
+  src: url("/fonts/geist-mono/GeistMono-VariableFont_wght.ttf")
+    format("truetype");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Geist Mono';
-  src: url('/fonts/geist-mono/static/GeistMono-Regular.ttf') format('truetype');
+  font-family: "Geist Mono";
+  src: url("/fonts/geist-mono/static/GeistMono-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Geist Mono';
-  src: url('/fonts/geist-mono/static/GeistMono-Medium.ttf') format('truetype');
+  font-family: "Geist Mono";
+  src: url("/fonts/geist-mono/static/GeistMono-Medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Geist Mono';
-  src: url('/fonts/geist-mono/static/GeistMono-SemiBold.ttf') format('truetype');
+  font-family: "Geist Mono";
+  src: url("/fonts/geist-mono/static/GeistMono-SemiBold.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Geist Mono';
-  src: url('/fonts/geist-mono/static/GeistMono-Bold.ttf') format('truetype');
+  font-family: "Geist Mono";
+  src: url("/fonts/geist-mono/static/GeistMono-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -89,8 +90,11 @@
 
 /* Font configuration with Geist as sans and Geist Mono as mono */
 @theme {
-  --font-family-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  --font-family-mono: "Geist Mono", ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-family-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji";
+  --font-family-mono: "Geist Mono", ui-monospace, SFMono-Regular, "SF Mono",
+    Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
   /* Custom font sizes - decreased by 2px each, with 14px as default */
   --text-xs: 0.625rem; /* 10px (was 12px) */
@@ -125,7 +129,9 @@
 body,
 html,
 * {
-  font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji" !important;
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji" !important;
 }
 
 /* Force 14px font size in Fumadocs components and MDX content */
