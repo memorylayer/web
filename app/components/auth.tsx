@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { RiGithubFill as GithubIcon } from "@remixicon/react";
+import { signInWithProvider } from "@memorylayer/auth";
 import * as React from "react";
 
 interface AuthProps {
@@ -10,17 +11,20 @@ interface AuthProps {
 
 export function Auth({ title, className, onSuccess }: AuthProps) {
   const [isLoading, setIsLoading] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
   const handleSignIn = async (provider: "github" | "google") => {
     try {
       setIsLoading(provider);
-      // await signIn.social({
-      //   provider,
-      //   callbackURL: window.location.origin,
-      // });
+      setError(null);
+      
+      await signInWithProvider(provider);
+      
+      // If we reach here, sign-in was successful
       onSuccess?.();
     } catch (error) {
       console.error(`${provider} sign in failed:`, error);
+      setError(`Failed to sign in with ${provider}. Please try again.`);
     } finally {
       setIsLoading(null);
     }
@@ -34,6 +38,13 @@ export function Auth({ title, className, onSuccess }: AuthProps) {
           {title || "Sign in to continue"}
         </h2>
       </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="w-full max-w-sm p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+          {error}
+        </div>
+      )}
 
       {/* Auth Buttons */}
       <div className="w-full max-w-sm space-y-3">
