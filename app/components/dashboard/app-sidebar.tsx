@@ -29,6 +29,7 @@ import type * as React from "react";
 import { NavMain } from "@/components/dashboard/nav-main";
 import { NavSecondary } from "@/components/dashboard/nav-secondary";
 import { NavUser } from "@/components/dashboard/nav-user";
+import { LayerSwitcher } from "@/components/dashboard/layer-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -49,27 +50,27 @@ const data = {
     {
       title: "Dashboard",
       url: "#",
-      icon: DashboardIcon,
+      icon: IconDashboard,
     },
     {
       title: "Memories",
       url: "#",
-      icon: BrainIcon,
+      icon: IconListDetails,
     },
     {
       title: "Memory Graph",
       url: "#",
-      icon: GraphIcon,
+      icon: IconChartBar,
     },
     {
       title: "Memory Usage",
       url: "#",
-      icon: MemoryUsageIcon,
+      icon: IconFolder,
     },
     {
       title: "Memory Playground",
       url: "#",
-      icon: ChatIcon,
+      icon: IconUsers,
     },
   ],
   navClouds: [
@@ -160,19 +161,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
-            >
-              <a href="/">
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <LayerSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
