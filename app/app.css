@@ -134,14 +134,48 @@ html,
     "Segoe UI Emoji" !important;
 }
 
-/* Force 14px font size in Fumadocs components and MDX content */
+/* Global reset for normal text sizes - override any unwanted small fonts */
+body {
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+}
+
+/* Reset font sizes to normal for dashboard */
+:not([data-layout="docs"]) .text-xs { font-size: 0.75rem !important; }
+:not([data-layout="docs"]) .text-sm { font-size: 0.875rem !important; }
+:not([data-layout="docs"]) .text-base { font-size: 1rem !important; }
+:not([data-layout="docs"]) .text-lg { font-size: 1.125rem !important; }
+:not([data-layout="docs"]) .text-xl { font-size: 1.25rem !important; }
+:not([data-layout="docs"]) .text-2xl { font-size: 1.5rem !important; }
+:not([data-layout="docs"]) .text-3xl { font-size: 1.875rem !important; }
+
+/* Dashboard specific font size resets */
+[data-layout="dashboard"] *,
+[data-layout="dashboard"] p,
+[data-layout="dashboard"] span,
+[data-layout="dashboard"] div,
+[data-layout="dashboard"] button,
+[data-layout="dashboard"] input,
+[data-layout="dashboard"] label {
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+/* Ensure sidebar uses normal text sizes */
+.sidebar *,
+[data-sidebar] *,
+aside * {
+  font-size: inherit !important;
+}
+
+/* Force 14px font size ONLY in Fumadocs components and MDX content */
 [data-docs-body] p,
 [data-docs-body] li,
 [data-docs-body] span,
 [data-docs-body] div,
 [data-docs-body] text,
-.text-base,
-.text-sm,
+[data-layout="docs"] .text-base,
+[data-layout="docs"] .text-sm,
 .prose p,
 .prose li,
 .prose span,
@@ -158,20 +192,20 @@ html,
   line-height: 1.43 !important; /* ~20px line height */
 }
 
-/* Override specific Fumadocs text classes */
-.text-base {
+/* Override specific Fumadocs text classes ONLY in docs layout */
+[data-layout="docs"] .text-base {
   font-size: 0.875rem !important; /* 14px */
 }
 
-.text-sm {
+[data-layout="docs"] .text-sm {
   font-size: 0.75rem !important; /* 12px */
 }
 
-.text-lg {
+[data-layout="docs"] .text-lg {
   font-size: 1rem !important; /* 16px */
 }
 
-.text-xl {
+[data-layout="docs"] .text-xl {
   font-size: 1.125rem !important; /* 18px */
 }
 
@@ -207,25 +241,29 @@ html,
 [data-layout="docs"] p,
 [data-layout="docs"] span,
 [data-layout="docs"] div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6),
-/* Target main content areas but preserve headers */
+/* Target main content areas but preserve headers ONLY in docs */
+  [data-layout="docs"]
   main
   p,
-main span,
-main div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not([class*="text-"]),
-[role="main"] p,
-[role="main"] span,
-[role="main"]
+[data-layout="docs"] main span,
+[data-layout="docs"]
+  main
+  div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not([class*="text-"]),
+[data-layout="docs"] [role="main"] p,
+[data-layout="docs"] [role="main"] span,
+[data-layout="docs"]
+  [role="main"]
   div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not([class*="text-"]) {
   font-size: 0.875rem !important; /* 14px */
   line-height: 1.43 !important;
 }
 
-/* Force 14px on text size classes that fumadocs might use for body text */
-.text-lg:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
+/* Force 14px on text size classes that fumadocs might use for body text ONLY in docs */
+[data-layout="docs"] .text-lg:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
   font-size: 0.875rem !important; /* Force 14px instead of 16px */
 }
 
-.text-xl:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
+[data-layout="docs"] .text-xl:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
   font-size: 0.875rem !important; /* Force 14px instead of 18px */
 }
 
@@ -376,7 +414,7 @@ code * {
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
+  --sidebar: oklch(0.945 0 0);
   --sidebar-foreground: oklch(0.141 0.005 285.823);
   --sidebar-primary: oklch(0.21 0.006 285.885);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -387,36 +425,36 @@ code * {
 }
 
 .dark {
-  --background: oklch(0.141 0.005 285.823);
+  --background: oklch(0.08 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.21 0.006 285.885);
+  --card: oklch(0.14 0 0);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.21 0.006 285.885);
+  --popover: oklch(0.14 0 0);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.92 0.004 286.32);
   --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.274 0.006 286.033);
+  --secondary: oklch(0.16 0 0);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
+  --muted: oklch(0.16 0 0);
   --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
+  --accent: oklch(0.16 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
+  --border: oklch(0.2 0 0);
+  --input: oklch(0.2 0 0);
   --ring: oklch(0.552 0.016 285.938);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.21 0.006 285.885);
+  --sidebar: oklch(21.34% 0.000 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
+  --sidebar-accent: oklch(0.16 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-border: oklch(0.2 0 0);
   --sidebar-ring: oklch(0.552 0.016 285.938);
 }
 
