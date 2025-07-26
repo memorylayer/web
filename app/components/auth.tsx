@@ -54,7 +54,7 @@ export function Auth({ title, className, onSuccess }: AuthProps) {
           disabled={isLoading !== null}
           variant="outline"
           size="lg"
-          className="w-full h-12 text-base font-medium border-2 hover:border-primary/20 transition-colors cursor-pointer"
+          className="w-full h-12 text-base border-2 hover:border-primary/20 transition-colors cursor-pointer"
         >
           <svg
             className="mr-3 h-5 w-5"
