@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { RiGithubFill as GithubIcon } from "@remixicon/react";
 import { signInWithProvider } from "@memorylayer/auth/client";
+import { RiGithubFill as GithubIcon } from "@remixicon/react";
 import * as React from "react";
 
 interface AuthProps {
@@ -17,9 +17,9 @@ export function Auth({ title, className, onSuccess }: AuthProps) {
     try {
       setIsLoading(provider);
       setError(null);
-      
+
       await signInWithProvider(provider);
-      
+
       // If we reach here, sign-in was successful
       onSuccess?.();
     } catch (error) {

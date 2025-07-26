@@ -4,8 +4,8 @@ import { DataTable } from "@/components/dashboard/data-table";
 import data from "@/components/dashboard/data.json";
 import { SectionCards } from "@/components/dashboard/section-cards";
 import { SiteHeader } from "@/components/dashboard/site-header";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ProtectedRoute } from "@/components/protected-route";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Page() {
   return (

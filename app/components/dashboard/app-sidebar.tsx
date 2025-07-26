@@ -1,20 +1,20 @@
 import {
-  RiExchange2Fill as GraphIcon,
   RiBrainFill as BrainIcon,
-  RiDashboardFill as DashboardIcon,
-  RiFundsBoxFill as MemoryUsageIcon,
   RiChatAiFill as ChatIcon,
-  RiEqualizer2Line as SettingsIcon,
+  RiDashboardFill as DashboardIcon,
+  RiExchange2Fill as GraphIcon,
   RiQuestionLine as HelpIcon,
+  RiFundsBoxFill as MemoryUsageIcon,
   RiMenuSearchLine as SearchIcon,
+  RiEqualizer2Line as SettingsIcon,
 } from "@remixicon/react";
 
 import type * as React from "react";
 
+import { LayerSwitcher } from "@/components/dashboard/layer-switcher";
 import { NavMain } from "@/components/dashboard/nav-main";
 import { NavSecondary } from "@/components/dashboard/nav-secondary";
 import { NavUser } from "@/components/dashboard/nav-user";
-import { LayerSwitcher } from "@/components/dashboard/layer-switcher";
 import {
   Sidebar,
   SidebarContent,

@@ -1,6 +1,12 @@
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { authClient } from "@memorylayer/auth/client";
 import type { User } from "@memorylayer/auth";
+import { authClient } from "@memorylayer/auth/client";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 interface AuthContextType {
   user: User | null;

@@ -11,7 +11,7 @@ export function meta() {
 export default function Login() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  
+
   const handleAuthSuccess = () => {
     // Redirect to the page they were trying to access, or dashboard
     const from = searchParams.get("from") || "/dashboard";

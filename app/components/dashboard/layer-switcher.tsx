@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
   IconBuilding,
   IconCheck,
@@ -8,6 +7,7 @@ import {
   IconInnerShadowTop,
   IconPlus,
 } from "@tabler/icons-react";
+import * as React from "react";
 import { toast } from "sonner";
 
 import {
@@ -56,15 +56,18 @@ export function LayerSwitcher() {
   const [selectedLayer, setSelectedLayer] = React.useState<Layer>(layers[0]);
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const handleLayerChange = React.useCallback((layer: Layer) => {
-    if (layer.id !== selectedLayer.id) {
-      setSelectedLayer(layer);
-      toast.success(`Switched to ${layer.name}`, {
-        description: `Now using ${layer.plan} plan`,
-      });
-    }
-    setIsOpen(false);
-  }, [selectedLayer.id]);
+  const handleLayerChange = React.useCallback(
+    (layer: Layer) => {
+      if (layer.id !== selectedLayer.id) {
+        setSelectedLayer(layer);
+        toast.success(`Switched to ${layer.name}`, {
+          description: `Now using ${layer.plan} plan`,
+        });
+      }
+      setIsOpen(false);
+    },
+    [selectedLayer.id],
+  );
 
   const handleAddLayer = () => {
     toast.info("Add layer functionality", {
@@ -74,29 +77,25 @@ export function LayerSwitcher() {
   };
 
   // Handle keyboard shortcuts
-  React.useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.metaKey || event.ctrlKey) {
-        switch (event.key) {
-          case "1":
-            event.preventDefault();
-            handleLayerChange(layers[0]);
-            break;
-          case "2":
-            event.preventDefault();
-            if (layers[1]) handleLayerChange(layers[1]);
-            break;
-          case "3":
-            event.preventDefault();
-            if (layers[2]) handleLayerChange(layers[2]);
-            break;
-        }
-      }
-    };
+  const handleKeyboardShortcut = React.useCallback(
+    (event: KeyboardEvent) => {
+      if (!(event.metaKey || event.ctrlKey)) return;
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleLayerChange]);
+      const keyToIndex: Record<string, number> = { "1": 0, "2": 1, "3": 2 };
+      const index = keyToIndex[event.key];
+
+      if (index !== undefined && layers[index]) {
+        event.preventDefault();
+        handleLayerChange(layers[index]);
+      }
+    },
+    [handleLayerChange],
+  );
+
+  React.useEffect(() => {
+    window.addEventListener("keydown", handleKeyboardShortcut);
+    return () => window.removeEventListener("keydown", handleKeyboardShortcut);
+  }, [handleKeyboardShortcut]);
 
   return (
     <SidebarMenu>
@@ -111,10 +110,16 @@ export function LayerSwitcher() {
                 <IconInnerShadowTop className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{selectedLayer.name}</span>
-                <span className="truncate text-xs text-sidebar-foreground/70">{selectedLayer.plan}</span>
+                <span className="truncate font-semibold">
+                  {selectedLayer.name}
+                </span>
+                <span className="truncate text-xs text-sidebar-foreground/70">
+                  {selectedLayer.plan}
+                </span>
               </div>
-              <IconChevronDown className={`ml-auto size-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+              <IconChevronDown
+                className={`ml-auto size-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+              />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -137,16 +142,23 @@ export function LayerSwitcher() {
                 </div>
                 <div className="flex flex-1 flex-col">
                   <span className="text-sm font-medium">{layer.name}</span>
-                  <span className="text-xs text-muted-foreground">{layer.plan}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {layer.plan}
+                  </span>
                 </div>
-                <span className="text-xs text-muted-foreground">{layer.shortcut}</span>
+                <span className="text-xs text-muted-foreground">
+                  {layer.shortcut}
+                </span>
                 {selectedLayer.id === layer.id && (
                   <IconCheck className="size-4 text-primary" />
                 )}
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleAddLayer} className="gap-2 p-2 cursor-pointer">
+            <DropdownMenuItem
+              onClick={handleAddLayer}
+              className="gap-2 p-2 cursor-pointer"
+            >
               <div className="flex size-6 items-center justify-center rounded-md border border-dashed">
                 <IconPlus className="size-4" />
               </div>
@@ -157,4 +169,4 @@ export function LayerSwitcher() {
       </SidebarMenuItem>
     </SidebarMenu>
   );
-} 
+}

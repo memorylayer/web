@@ -135,13 +135,27 @@ html,
 }
 
 /* Reset font sizes to normal for dashboard only */
-[data-layout="dashboard"] .text-xs { font-size: 0.75rem; }
-[data-layout="dashboard"] .text-sm { font-size: 0.875rem; }
-[data-layout="dashboard"] .text-base { font-size: 1rem; }
-[data-layout="dashboard"] .text-lg { font-size: 1.125rem; }
-[data-layout="dashboard"] .text-xl { font-size: 1.25rem; }
-[data-layout="dashboard"] .text-2xl { font-size: 1.5rem; }
-[data-layout="dashboard"] .text-3xl { font-size: 1.875rem; }
+[data-layout="dashboard"] .text-xs {
+  font-size: 0.75rem;
+}
+[data-layout="dashboard"] .text-sm {
+  font-size: 0.875rem;
+}
+[data-layout="dashboard"] .text-base {
+  font-size: 1rem;
+}
+[data-layout="dashboard"] .text-lg {
+  font-size: 1.125rem;
+}
+[data-layout="dashboard"] .text-xl {
+  font-size: 1.25rem;
+}
+[data-layout="dashboard"] .text-2xl {
+  font-size: 1.5rem;
+}
+[data-layout="dashboard"] .text-3xl {
+  font-size: 1.875rem;
+}
 
 /* Dashboard specific font size resets - less aggressive */
 [data-layout="dashboard"] p,
@@ -175,14 +189,16 @@ html,
 .fd-description,
 .fd-body,
 /* Target fumadocs paragraph/text content but preserve headers */
-[class*="fd-"] p,
+  [class*="fd-"]
+  p,
 [class*="fd-"] span,
 [class*="fd-"] div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6),
 [class*="docs-"] p,
 [class*="docs-"] span,
 [class*="docs-"] div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6),
 /* Target fumadocs layout content but preserve headers */
-[data-docs-layout] p,
+  [data-docs-layout]
+  p,
 [data-docs-layout] span,
 [data-docs-layout] div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
   font-size: 0.875rem; /* 14px */
@@ -370,7 +386,7 @@ code * {
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(21.34% 0.000 0);
+  --sidebar: oklch(21.34% 0.0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
