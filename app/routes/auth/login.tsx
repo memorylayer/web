@@ -1,5 +1,5 @@
 import { Auth } from "@/components/auth";
-import { Link } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 
 export function meta() {
   return [
@@ -9,9 +9,13 @@ export function meta() {
 }
 
 export default function Login() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  
   const handleAuthSuccess = () => {
-    // TODO: Implement redirect logic after successful authentication
-    console.log("Authentication successful");
+    // Redirect to the page they were trying to access, or dashboard
+    const from = searchParams.get("from") || "/dashboard";
+    navigate(from, { replace: true });
   };
 
   return (
