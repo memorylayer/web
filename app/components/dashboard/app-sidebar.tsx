@@ -1,27 +1,12 @@
 import {
-  IconCamera,
-  IconChartBar,
-  IconDashboard,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconFolder,
-  IconHelp,
-  IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
-  IconSearch,
-  IconSettings,
-  IconUsers,
-} from "@tabler/icons-react";
-
-import {
-  RiNodeTree as GraphIcon,
+  RiExchange2Fill as GraphIcon,
   RiBrainFill as BrainIcon,
   RiDashboardFill as DashboardIcon,
-  RiAedFill as MemoryUsageIcon,
+  RiFundsBoxFill as MemoryUsageIcon,
   RiChatAiFill as ChatIcon,
+  RiEqualizer2Line as SettingsIcon,
+  RiQuestionLine as HelpIcon,
+  RiMenuSearchLine as SearchIcon,
 } from "@remixicon/react";
 
 import type * as React from "react";
@@ -49,112 +34,48 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
-      icon: IconDashboard,
+      url: "/dashboard",
+      icon: DashboardIcon,
     },
     {
       title: "Memories",
-      url: "#",
-      icon: IconListDetails,
+      url: "/dashboard/memories",
+      icon: BrainIcon,
+    },
+    {
+      title: "Memory Lane",
+      url: "/dashboard/memory-lane",
+      icon: ChatIcon,
     },
     {
       title: "Memory Graph",
-      url: "#",
-      icon: IconChartBar,
+      url: "/dashboard/memory-graph",
+      icon: GraphIcon,
     },
     {
       title: "Memory Usage",
-      url: "#",
-      icon: IconFolder,
-    },
-    {
-      title: "Memory Playground",
-      url: "#",
-      icon: IconUsers,
+      url: "/dashboard/memory-usage",
+      icon: MemoryUsageIcon,
     },
   ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: IconCamera,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
+
   navSecondary: [
     {
       title: "Settings",
       url: "#",
-      icon: IconSettings,
+      icon: SettingsIcon,
     },
     {
       title: "Get Help",
       url: "#",
-      icon: IconHelp,
+      icon: HelpIcon,
     },
     {
       title: "Search",
       url: "#",
-      icon: IconSearch,
+      icon: SearchIcon,
     },
   ],
-  // documents: [
-  //   {
-  //     name: "Team",
-  //     url: "#",
-  //     icon: IconDatabase,
-  //   },
-  //   {
-  //     name: "Plans",
-  //     url: "#",
-  //     icon: IconReport,
-  //   },
-  //   {
-  //     name: "Billing",
-  //     url: "#",
-  //     icon: IconFileWord,
-  //   },
-  // ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -165,7 +86,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        {/* <NavDocuments items={data.documents} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

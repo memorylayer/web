@@ -134,91 +134,40 @@ html,
     "Segoe UI Emoji" !important;
 }
 
-/* Global reset for normal text sizes - override any unwanted small fonts */
-body {
-  font-size: 16px !important;
-  line-height: 1.5 !important;
-}
+/* Reset font sizes to normal for dashboard only */
+[data-layout="dashboard"] .text-xs { font-size: 0.75rem; }
+[data-layout="dashboard"] .text-sm { font-size: 0.875rem; }
+[data-layout="dashboard"] .text-base { font-size: 1rem; }
+[data-layout="dashboard"] .text-lg { font-size: 1.125rem; }
+[data-layout="dashboard"] .text-xl { font-size: 1.25rem; }
+[data-layout="dashboard"] .text-2xl { font-size: 1.5rem; }
+[data-layout="dashboard"] .text-3xl { font-size: 1.875rem; }
 
-/* Reset font sizes to normal for dashboard */
-:not([data-layout="docs"]) .text-xs { font-size: 0.75rem !important; }
-:not([data-layout="docs"]) .text-sm { font-size: 0.875rem !important; }
-:not([data-layout="docs"]) .text-base { font-size: 1rem !important; }
-:not([data-layout="docs"]) .text-lg { font-size: 1.125rem !important; }
-:not([data-layout="docs"]) .text-xl { font-size: 1.25rem !important; }
-:not([data-layout="docs"]) .text-2xl { font-size: 1.5rem !important; }
-:not([data-layout="docs"]) .text-3xl { font-size: 1.875rem !important; }
-
-/* Dashboard specific font size resets */
-[data-layout="dashboard"] *,
+/* Dashboard specific font size resets - less aggressive */
 [data-layout="dashboard"] p,
 [data-layout="dashboard"] span,
-[data-layout="dashboard"] div,
-[data-layout="dashboard"] button,
-[data-layout="dashboard"] input,
-[data-layout="dashboard"] label {
-  font-size: inherit !important;
-  line-height: inherit !important;
+[data-layout="dashboard"] div {
+  line-height: 1.5;
 }
 
-/* Ensure sidebar uses normal text sizes */
-.sidebar *,
-[data-sidebar] *,
-aside * {
-  font-size: inherit !important;
-}
-
-/* Force 14px font size ONLY in Fumadocs components and MDX content */
+/* Force 14px font size ONLY in fumadocs content areas using fumadocs' own attributes */
 [data-docs-body] p,
 [data-docs-body] li,
 [data-docs-body] span,
 [data-docs-body] div,
-[data-docs-body] text,
-[data-layout="docs"] .text-base,
-[data-layout="docs"] .text-sm,
 .prose p,
 .prose li,
 .prose span,
 .prose div,
-.fumadocs-body p,
-.fumadocs-body li,
-.fumadocs-body span,
-.fumadocs-body div,
 .fd-prose p,
 .fd-prose li,
 .fd-prose span,
 .fd-prose div {
-  font-size: 0.875rem !important; /* 14px */
-  line-height: 1.43 !important; /* ~20px line height */
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.43; /* ~20px line height */
 }
 
-/* Override specific Fumadocs text classes ONLY in docs layout */
-[data-layout="docs"] .text-base {
-  font-size: 0.875rem !important; /* 14px */
-}
-
-[data-layout="docs"] .text-sm {
-  font-size: 0.75rem !important; /* 12px */
-}
-
-[data-layout="docs"] .text-lg {
-  font-size: 1rem !important; /* 16px */
-}
-
-[data-layout="docs"] .text-xl {
-  font-size: 1.125rem !important; /* 18px */
-}
-
-/* Ensure all MDX rendered content uses 14px */
-.mdx-content,
-.mdx-content p,
-.mdx-content li,
-.mdx-content span {
-  font-size: 0.875rem !important; /* 14px */
-  line-height: 1.43 !important;
-}
-
-/* Target fumadocs UI components specifically for 14px */
+/* Target fumadocs UI components specifically for 14px using fumadocs patterns */
 [data-component="DocsDescription"],
 [data-component="DocsBody"],
 .docs-description,
@@ -226,45 +175,18 @@ aside * {
 .fd-description,
 .fd-body,
 /* Target fumadocs paragraph/text content but preserve headers */
-  [class*="fd-"]
-  p,
+[class*="fd-"] p,
 [class*="fd-"] span,
 [class*="fd-"] div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6),
 [class*="docs-"] p,
 [class*="docs-"] span,
 [class*="docs-"] div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6),
 /* Target fumadocs layout content but preserve headers */
-  [data-docs-layout]
-  p,
+[data-docs-layout] p,
 [data-docs-layout] span,
-[data-docs-layout] div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6),
-[data-layout="docs"] p,
-[data-layout="docs"] span,
-[data-layout="docs"] div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6),
-/* Target main content areas but preserve headers ONLY in docs */
-  [data-layout="docs"]
-  main
-  p,
-[data-layout="docs"] main span,
-[data-layout="docs"]
-  main
-  div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not([class*="text-"]),
-[data-layout="docs"] [role="main"] p,
-[data-layout="docs"] [role="main"] span,
-[data-layout="docs"]
-  [role="main"]
-  div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not([class*="text-"]) {
-  font-size: 0.875rem !important; /* 14px */
-  line-height: 1.43 !important;
-}
-
-/* Force 14px on text size classes that fumadocs might use for body text ONLY in docs */
-[data-layout="docs"] .text-lg:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-  font-size: 0.875rem !important; /* Force 14px instead of 16px */
-}
-
-[data-layout="docs"] .text-xl:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-  font-size: 0.875rem !important; /* Force 14px instead of 18px */
+[data-docs-layout] div:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.43;
 }
 
 /* Custom font size for code blocks - decrease by 2px from default */

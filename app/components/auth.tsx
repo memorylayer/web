@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { RiGithubFill as GithubIcon } from "@remixicon/react";
-import { signInWithProvider } from "@memorylayer/auth";
+import { signInWithProvider } from "@memorylayer/auth/client";
 import * as React from "react";
 
 interface AuthProps {
@@ -54,7 +54,7 @@ export function Auth({ title, className, onSuccess }: AuthProps) {
           disabled={isLoading !== null}
           variant="outline"
           size="lg"
-          className="w-full h-12 text-sm font-medium border-2 hover:border-primary/20 transition-colors cursor-pointer"
+          className="w-full h-12 text-base font-medium border-2 hover:border-primary/20 transition-colors cursor-pointer"
         >
           <svg
             className="mr-3 h-5 w-5"
@@ -88,7 +88,7 @@ export function Auth({ title, className, onSuccess }: AuthProps) {
           disabled={isLoading !== null}
           variant="outline"
           size="lg"
-          className="w-full h-12 text-sm font-medium border-2 hover:border-primary/20 transition-colors cursor-pointer"
+          className="w-full h-12 text-base font-medium border-2 hover:border-primary/20 transition-colors cursor-pointer"
         >
           <GithubIcon className="mr-3 h-5 w-5" />
           {isLoading === "github" ? "Signing in..." : "Continue with GitHub"}
