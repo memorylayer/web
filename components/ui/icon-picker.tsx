@@ -91,6 +91,27 @@ const useIconsData = () => {
   return { icons, isLoading };
 };
 
+const categorizeIcons = (icons: IconData[]) => {
+  const categories = new Map<string, IconData[]>();
+
+  for (const icon of icons) {
+    const iconCategories = icon.categories?.length
+      ? icon.categories
+      : ["Other"];
+
+    for (const category of iconCategories) {
+      if (!categories.has(category)) {
+        categories.set(category, []);
+      }
+      categories.get(category)?.push(icon);
+    }
+  }
+
+  return Array.from(categories.entries())
+    .map(([name, icons]) => ({ name, icons }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+};
+
 const IconPicker = React.forwardRef<
   React.ComponentRef<typeof PopoverTrigger>,
   IconPickerProps
@@ -147,29 +168,7 @@ const IconPicker = React.forwardRef<
       if (!categorized || search.trim() !== "") {
         return [{ name: "All Icons", icons: filteredIcons }];
       }
-
-      const categories = new Map<string, IconData[]>();
-
-      for (const icon of filteredIcons) {
-        if (icon.categories && icon.categories.length > 0) {
-          for (const category of icon.categories) {
-            if (!categories.has(category)) {
-              categories.set(category, []);
-            }
-            categories.get(category)?.push(icon);
-          }
-        } else {
-          const category = "Other";
-          if (!categories.has(category)) {
-            categories.set(category, []);
-          }
-          categories.get(category)?.push(icon);
-        }
-      }
-
-      return Array.from(categories.entries())
-        .map(([name, icons]) => ({ name, icons }))
-        .sort((a, b) => a.name.localeCompare(b.name));
+      return categorizeIcons(filteredIcons);
     }, [filteredIcons, categorized, search]);
 
     const virtualItems = useMemo(() => {
