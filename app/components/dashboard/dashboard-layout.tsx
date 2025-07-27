@@ -104,14 +104,14 @@ export function DashboardLayout({ title, children }: DashboardLayoutProps) {
               </div>
             </div>
 
-            {/* AI Chat Input - Fixed at bottom of content area only */}
+            {/* AI Chat Input - Fixed to the center of the content area */}
             <div className="absolute bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <div className="p-4">
+              <div className="p-4 mx-auto max-w-lg">
                 <AIInput onSubmit={handleFormSubmit} className="shadow-lg">
                   <AIInputTextarea
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
-                    placeholder="Ask me anything about your memories..."
+                    placeholder="Ask anything, let's go down the memory lane..."
                     disabled={isSubmitting}
                   />
                   <AIInputToolbar>
