@@ -6,6 +6,8 @@ import {
   IconUserCircle,
 } from "@tabler/icons-react";
 
+import { useAuth } from "@/providers/auth-provider";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -33,6 +35,7 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const { signOut } = useAuth();
 
   return (
     <SidebarMenu>
@@ -92,7 +95,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={signOut}>
               <IconLogout />
               Log out
             </DropdownMenuItem>
