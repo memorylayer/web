@@ -1,11 +1,20 @@
+import {
+  AIInput,
+  AIInputSubmit,
+  AIInputTextarea,
+  AIInputToolbar,
+} from "@/components/ai/input";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AIInput, AIInputTextarea, AIInputToolbar, AIInputSubmit } from "@/components/ai/input";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { useEffect, useState, useCallback } from "react";
 
 interface DashboardLayoutProps {
   title: string;
@@ -18,34 +27,37 @@ export function DashboardLayout({ title, children }: DashboardLayoutProps) {
   const [inputValue, setInputValue] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = useCallback(async (message: string = inputValue) => {
-    if (!message.trim()) return;
+  const handleSubmit = useCallback(
+    async (message: string = inputValue) => {
+      if (!message.trim()) return;
 
-    const isOnMemoryLane = location.pathname === "/dashboard/memory-lane";
+      const isOnMemoryLane = location.pathname === "/dashboard/memory-lane";
 
-    if (!isOnMemoryLane) {
-      // Store input and redirect to memory lane
-      localStorage.setItem("ai-chat-input", message.trim());
-      navigate("/dashboard/memory-lane");
-      return;
-    }
+      if (!isOnMemoryLane) {
+        // Store input and redirect to memory lane
+        localStorage.setItem("ai-chat-input", message.trim());
+        navigate("/dashboard/memory-lane");
+        return;
+      }
 
-    // Submit the chat on memory lane page
-    setIsSubmitting(true);
-    try {
-      // TODO: Implement actual chat submission logic here
-      console.log("Submitting chat:", message);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setInputValue("");
-    } catch (error) {
-      console.error("Error submitting chat:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [inputValue, location.pathname, navigate]);
+      // Submit the chat on memory lane page
+      setIsSubmitting(true);
+      try {
+        // TODO: Implement actual chat submission logic here
+        console.log("Submitting chat:", message);
+
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        setInputValue("");
+      } catch (error) {
+        console.error("Error submitting chat:", error);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [inputValue, location.pathname, navigate],
+  );
 
   // Check for stored input when component mounts
   useEffect(() => {
@@ -85,7 +97,12 @@ export function DashboardLayout({ title, children }: DashboardLayoutProps) {
                 />
                 <h1 className="text-base font-medium">{title}</h1>
                 <div className="ml-auto flex items-center gap-2">
-                  <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
+                  <Button
+                    variant="ghost"
+                    asChild
+                    size="sm"
+                    className="hidden sm:flex"
+                  >
                     <a
                       href="https://memorylayer.dev/docs"
                       rel="noopener noreferrer"
@@ -116,7 +133,7 @@ export function DashboardLayout({ title, children }: DashboardLayoutProps) {
                   />
                   <AIInputToolbar>
                     <div className="flex-1" />
-                    <AIInputSubmit 
+                    <AIInputSubmit
                       disabled={!inputValue.trim() || isSubmitting}
                       status={isSubmitting ? "submitted" : "ready"}
                     />
