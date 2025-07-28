@@ -75,6 +75,14 @@ export function DashboardLayout({ title, children }: DashboardLayoutProps) {
     handleSubmit();
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+    // Shift+Enter will allow default behavior (new line)
+  };
+
   return (
     <ProtectedRoute>
       <div data-layout="dashboard" className="relative">
@@ -115,19 +123,21 @@ export function DashboardLayout({ title, children }: DashboardLayoutProps) {
                 </div>
               </div>
             </header>
-            <div className="flex flex-1 flex-col">
+            <div className="flex flex-1 flex-col" style={{ minHeight: 'calc(100vh + 75px)' }}>
               <div className="@container/main flex flex-1 flex-col gap-2 pb-24">
                 {children}
               </div>
             </div>
 
             {/* AI Chat Input - Fixed to the center of the content area */}
-            <div className="absolute bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <div className="p-4 mx-auto max-w-lg">
+            <div className="fixed bottom-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" style={{ left: 'var(--sidebar-width)', right: 0 }}>
+              <div className="p-4 mx-auto max-w-2xl">
                 <AIInput onSubmit={handleFormSubmit} className="shadow-lg">
                   <AIInputTextarea
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    className="font-mono text-sm"
                     placeholder="Ask anything, let's go down the memory lane..."
                     disabled={isSubmitting}
                   />

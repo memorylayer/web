@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { Loader2Icon, SendIcon, SquareIcon, XIcon } from "lucide-react";
+import { Loader2Icon, ArrowUp, SquareIcon, XIcon } from "lucide-react";
 import type {
   ComponentProps,
   HTMLAttributes,
@@ -184,7 +184,7 @@ export const AIInputSubmit = ({
   children,
   ...props
 }: AIInputSubmitProps) => {
-  let Icon = <SendIcon />;
+  let Icon = <ArrowUp />;
   if (status === "submitted") {
     Icon = <Loader2Icon className="animate-spin" />;
   } else if (status === "streaming") {

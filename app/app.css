@@ -127,11 +127,23 @@
 
 /* Additional CSS to override any fumadocs defaults */
 body,
-html,
-* {
+html {
   font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI",
     "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji" !important;
+}
+
+/* Apply sans font to most elements but allow font-mono to work */
+*:not(.font-mono):not([class*="font-mono"]) {
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji";
+}
+
+/* Ensure font-mono class works properly */
+.font-mono {
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, "SF Mono", Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace !important;
 }
 
 /* Reset font sizes to normal for dashboard only */
@@ -514,4 +526,36 @@ aside {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Prevent layout shift with always-visible scrollbar space */
+html {
+  overflow-y: scroll;
+}
+
+/* Custom scrollbar styling for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Dark mode scrollbar adjustments */
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
