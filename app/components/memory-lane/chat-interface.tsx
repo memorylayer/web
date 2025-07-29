@@ -257,7 +257,7 @@ function ChatMessage({ message }: { message: Message }) {
             </AvatarFallback>
           </>
                  ) : (
-           <AvatarFallback className="bg-muted text-foreground">
+           <AvatarFallback className="bg-white text-black border">
              <Brain className="w-4 h-4" />
            </AvatarFallback>
          )}
