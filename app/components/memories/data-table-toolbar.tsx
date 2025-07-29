@@ -50,8 +50,7 @@ export function DataTableToolbar({
   reviewerFilter = [],
   onReviewerChange,
 }: DataTableToolbarProps) {
-  const selectedRowCount = table.getFilteredSelectedRowModel().rows.length;
-  const totalRowCount = table.getFilteredRowModel().rows.length;
+
 
   // Get unique values for filter options
   const statusOptions = React.useMemo(() => {
@@ -106,7 +105,7 @@ export function DataTableToolbar({
               placeholder="Search memories..."
               value={searchValue}
               onChange={(e) => onSearchChange?.(e.target.value)}
-              className="pl-9"
+              className="pl-9 text-xs font-mono"
             />
           </div>
 
@@ -377,22 +376,7 @@ export function DataTableToolbar({
         </div>
       )}
 
-      {/* Selection info */}
-      {selectedRowCount > 0 && (
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            {selectedRowCount} of {totalRowCount} row(s) selected
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button size="sm" variant="outline">
-              Export Selected
-            </Button>
-            <Button size="sm" variant="outline">
-              Bulk Edit
-            </Button>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 } 
