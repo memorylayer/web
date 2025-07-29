@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { Loader2Icon, ArrowUp, SquareIcon, XIcon } from "lucide-react";
+import { ArrowUp, Loader2Icon, SquareIcon, XIcon } from "lucide-react";
 import type {
   ComponentProps,
   HTMLAttributes,

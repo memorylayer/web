@@ -1,15 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -18,8 +10,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search, Filter, SlidersHorizontal, X, Settings2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Table } from "@tanstack/react-table";
+import { Filter, Search, Settings2, SlidersHorizontal, X } from "lucide-react";
 import React from "react";
 import type { Memory } from "./data";
 
@@ -50,42 +50,54 @@ export function DataTableToolbar({
   reviewerFilter = [],
   onReviewerChange,
 }: DataTableToolbarProps) {
-
-
   // Get unique values for filter options
   const statusOptions = React.useMemo(() => {
-    const statuses = table.getCoreRowModel().rows.map(row => row.original.status);
-    return Array.from(new Set(statuses)).map(status => ({
-      label: status === "in-progress" ? "In Progress" : status.charAt(0).toUpperCase() + status.slice(1),
-      value: status
+    const statuses = table
+      .getCoreRowModel()
+      .rows.map((row) => row.original.status);
+    return Array.from(new Set(statuses)).map((status) => ({
+      label:
+        status === "in-progress"
+          ? "In Progress"
+          : status.charAt(0).toUpperCase() + status.slice(1),
+      value: status,
     }));
   }, [table]);
 
   const priorityOptions = React.useMemo(() => {
-    const priorities = table.getCoreRowModel().rows.map(row => row.original.priority);
-    return Array.from(new Set(priorities)).map(priority => ({
+    const priorities = table
+      .getCoreRowModel()
+      .rows.map((row) => row.original.priority);
+    return Array.from(new Set(priorities)).map((priority) => ({
       label: priority.charAt(0).toUpperCase() + priority.slice(1),
-      value: priority
+      value: priority,
     }));
   }, [table]);
 
   const typeOptions = React.useMemo(() => {
-    const types = table.getCoreRowModel().rows.map(row => row.original.type);
-    return Array.from(new Set(types)).map(type => ({
+    const types = table.getCoreRowModel().rows.map((row) => row.original.type);
+    return Array.from(new Set(types)).map((type) => ({
       label: type,
-      value: type
+      value: type,
     }));
   }, [table]);
 
   const reviewerOptions = React.useMemo(() => {
-    const reviewers = table.getCoreRowModel().rows.map(row => row.original.reviewer);
-    return Array.from(new Set(reviewers)).map(reviewer => ({
+    const reviewers = table
+      .getCoreRowModel()
+      .rows.map((row) => row.original.reviewer);
+    return Array.from(new Set(reviewers)).map((reviewer) => ({
       label: reviewer,
-      value: reviewer
+      value: reviewer,
     }));
   }, [table]);
 
-  const hasActiveFilters = statusFilter.length > 0 || priorityFilter.length > 0 || typeFilter.length > 0 || reviewerFilter.length > 0 || searchValue.length > 0;
+  const hasActiveFilters =
+    statusFilter.length > 0 ||
+    priorityFilter.length > 0 ||
+    typeFilter.length > 0 ||
+    reviewerFilter.length > 0 ||
+    searchValue.length > 0;
 
   const clearAllFilters = () => {
     onSearchChange?.("");
@@ -136,7 +148,9 @@ export function DataTableToolbar({
                     if (checked) {
                       onStatusChange?.([...statusFilter, option.value]);
                     } else {
-                      onStatusChange?.(statusFilter.filter(v => v !== option.value));
+                      onStatusChange?.(
+                        statusFilter.filter((v) => v !== option.value),
+                      );
                     }
                   }}
                 >
@@ -173,7 +187,9 @@ export function DataTableToolbar({
                     if (checked) {
                       onPriorityChange?.([...priorityFilter, option.value]);
                     } else {
-                      onPriorityChange?.(priorityFilter.filter(v => v !== option.value));
+                      onPriorityChange?.(
+                        priorityFilter.filter((v) => v !== option.value),
+                      );
                     }
                   }}
                 >
@@ -210,7 +226,9 @@ export function DataTableToolbar({
                     if (checked) {
                       onTypeChange?.([...typeFilter, option.value]);
                     } else {
-                      onTypeChange?.(typeFilter.filter(v => v !== option.value));
+                      onTypeChange?.(
+                        typeFilter.filter((v) => v !== option.value),
+                      );
                     }
                   }}
                 >
@@ -247,7 +265,9 @@ export function DataTableToolbar({
                     if (checked) {
                       onReviewerChange?.([...reviewerFilter, option.value]);
                     } else {
-                      onReviewerChange?.(reviewerFilter.filter(v => v !== option.value));
+                      onReviewerChange?.(
+                        reviewerFilter.filter((v) => v !== option.value),
+                      );
                     }
                   }}
                 >
@@ -285,7 +305,8 @@ export function DataTableToolbar({
                 .getAllColumns()
                 .filter(
                   (column) =>
-                    typeof column.accessorFn !== "undefined" && column.getCanHide()
+                    typeof column.accessorFn !== "undefined" &&
+                    column.getCanHide(),
                 )
                 .map((column) => {
                   return (
@@ -293,7 +314,9 @@ export function DataTableToolbar({
                       key={column.id}
                       className="capitalize"
                       checked={column.getIsVisible()}
-                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
                     >
                       {column.id}
                     </DropdownMenuCheckboxItem>
@@ -322,52 +345,80 @@ export function DataTableToolbar({
             </Badge>
           )}
           {statusFilter.map((status) => (
-            <Badge key={status} variant="secondary" className="h-6 px-2 py-0 text-xs">
+            <Badge
+              key={status}
+              variant="secondary"
+              className="h-6 px-2 py-0 text-xs"
+            >
               Status: {status === "in-progress" ? "In Progress" : status}
               <Button
                 variant="ghost"
-                size="sm" 
+                size="sm"
                 className="ml-1 h-4 w-4 p-0 hover:bg-transparent"
-                onClick={() => onStatusChange?.(statusFilter.filter(v => v !== status))}
+                onClick={() =>
+                  onStatusChange?.(statusFilter.filter((v) => v !== status))
+                }
               >
                 <X className="h-3 w-3" />
               </Button>
             </Badge>
           ))}
           {priorityFilter.map((priority) => (
-            <Badge key={priority} variant="secondary" className="h-6 px-2 py-0 text-xs">
+            <Badge
+              key={priority}
+              variant="secondary"
+              className="h-6 px-2 py-0 text-xs"
+            >
               Priority: {priority}
               <Button
                 variant="ghost"
                 size="sm"
                 className="ml-1 h-4 w-4 p-0 hover:bg-transparent"
-                onClick={() => onPriorityChange?.(priorityFilter.filter(v => v !== priority))}
+                onClick={() =>
+                  onPriorityChange?.(
+                    priorityFilter.filter((v) => v !== priority),
+                  )
+                }
               >
                 <X className="h-3 w-3" />
               </Button>
             </Badge>
           ))}
           {typeFilter.map((type) => (
-            <Badge key={type} variant="secondary" className="h-6 px-2 py-0 text-xs">
+            <Badge
+              key={type}
+              variant="secondary"
+              className="h-6 px-2 py-0 text-xs"
+            >
               Type: {type}
               <Button
                 variant="ghost"
                 size="sm"
                 className="ml-1 h-4 w-4 p-0 hover:bg-transparent"
-                onClick={() => onTypeChange?.(typeFilter.filter(v => v !== type))}
+                onClick={() =>
+                  onTypeChange?.(typeFilter.filter((v) => v !== type))
+                }
               >
                 <X className="h-3 w-3" />
               </Button>
             </Badge>
           ))}
           {reviewerFilter.map((reviewer) => (
-            <Badge key={reviewer} variant="secondary" className="h-6 px-2 py-0 text-xs">
+            <Badge
+              key={reviewer}
+              variant="secondary"
+              className="h-6 px-2 py-0 text-xs"
+            >
               Reviewer: {reviewer}
               <Button
                 variant="ghost"
                 size="sm"
                 className="ml-1 h-4 w-4 p-0 hover:bg-transparent"
-                onClick={() => onReviewerChange?.(reviewerFilter.filter(v => v !== reviewer))}
+                onClick={() =>
+                  onReviewerChange?.(
+                    reviewerFilter.filter((v) => v !== reviewer),
+                  )
+                }
               >
                 <X className="h-3 w-3" />
               </Button>
@@ -375,8 +426,6 @@ export function DataTableToolbar({
           ))}
         </div>
       )}
-
-
     </div>
   );
-} 
+}

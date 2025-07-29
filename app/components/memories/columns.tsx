@@ -11,20 +11,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { Column, ColumnDef } from "@tanstack/react-table";
 import {
+  AlertTriangle,
+  Calendar,
   CheckCircle,
   CheckCircle2,
   Clock,
-  AlertTriangle,
-  XCircle,
+  Folder,
+  Hash,
   MoreHorizontal,
   Text,
-  Calendar,
-  Hash,
   User,
-  Folder,
+  XCircle,
 } from "lucide-react";
-import { DataTableColumnHeader } from "./data-table-column-header";
 import type { Memory } from "./data";
+import { DataTableColumnHeader } from "./data-table-column-header";
 
 function getStatusIcon(status: Memory["status"]) {
   switch (status) {
@@ -117,9 +117,7 @@ export const columns: ColumnDef<Memory>[] = [
       <DataTableColumnHeader column={column} title="Task" />
     ),
     cell: ({ cell }) => (
-      <div className="font-mono text-sm">
-        {cell.getValue<Memory["task"]>()}
-      </div>
+      <div className="font-mono text-sm">{cell.getValue<Memory["task"]>()}</div>
     ),
     meta: {
       label: "Task",
@@ -219,11 +217,7 @@ export const columns: ColumnDef<Memory>[] = [
     ),
     cell: ({ cell }) => {
       const hours = cell.getValue<Memory["estHours"]>();
-      return (
-        <div className="text-right font-mono">
-          {hours}h
-        </div>
-      );
+      return <div className="text-right font-mono">{hours}h</div>;
     },
     meta: {
       label: "Est. Hours",
@@ -236,7 +230,7 @@ export const columns: ColumnDef<Memory>[] = [
   },
   {
     id: "type",
-    accessorKey: "type", 
+    accessorKey: "type",
     header: ({ column }: { column: Column<Memory, unknown> }) => (
       <DataTableColumnHeader column={column} title="Type" />
     ),
@@ -250,14 +244,22 @@ export const columns: ColumnDef<Memory>[] = [
       variant: "multiSelect",
       options: [
         { label: "Narrative", value: "Narrative", icon: Folder },
-        { label: "Technical content", value: "Technical content", icon: Folder },
+        {
+          label: "Technical content",
+          value: "Technical content",
+          icon: Folder,
+        },
         { label: "Research", value: "Research", icon: Folder },
         { label: "Legal", value: "Legal", icon: Folder },
         { label: "Planning", value: "Planning", icon: Folder },
         { label: "Visual", value: "Visual", icon: Folder },
         { label: "Financial", value: "Financial", icon: Folder },
         { label: "Cover page", value: "Cover page", icon: Folder },
-        { label: "Table of contents", value: "Table of contents", icon: Folder },
+        {
+          label: "Table of contents",
+          value: "Table of contents",
+          icon: Folder,
+        },
         { label: "Plain language", value: "Plain language", icon: Folder },
       ],
     },
@@ -275,7 +277,9 @@ export const columns: ColumnDef<Memory>[] = [
       return (
         <div className="flex items-center gap-1">
           <User className="h-3 w-3 text-muted-foreground" />
-          <span className={reviewer === "Unassigned" ? "text-muted-foreground" : ""}>
+          <span
+            className={reviewer === "Unassigned" ? "text-muted-foreground" : ""}
+          >
             {reviewer}
           </span>
         </div>
@@ -342,13 +346,11 @@ export const columns: ColumnDef<Memory>[] = [
             <DropdownMenuItem>Edit</DropdownMenuItem>
             <DropdownMenuItem>Duplicate</DropdownMenuItem>
             <DropdownMenuItem>View Details</DropdownMenuItem>
-            <DropdownMenuItem variant="destructive">
-              Delete
-            </DropdownMenuItem>
+            <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
     },
     size: 32,
   },
-]; 
+];

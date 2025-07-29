@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import {
   type ColumnFiltersState,
   type SortingState,
@@ -13,17 +12,21 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { DataTable } from "./data-table";
-import { DataTableToolbar } from "./data-table-toolbar";
-import { DataTablePagination } from "./data-table-pagination";
+import React from "react";
 import { columns } from "./columns";
-import { memoriesData, type Memory } from "./data";
+import { type Memory, memoriesData } from "./data";
+import { DataTable } from "./data-table";
+import { DataTablePagination } from "./data-table-pagination";
+import { DataTableToolbar } from "./data-table-toolbar";
 
 export function MemoriesDataTable() {
   const [data] = React.useState<Memory[]>(memoriesData);
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -40,18 +43,36 @@ export function MemoriesDataTable() {
   // Filtered data based on toolbar filters
   const filteredData = React.useMemo(() => {
     return data.filter((item) => {
-      const matchesSearch = searchValue === "" || 
+      const matchesSearch =
+        searchValue === "" ||
         item.title.toLowerCase().includes(searchValue.toLowerCase()) ||
         item.task.toLowerCase().includes(searchValue.toLowerCase());
-      
-      const matchesStatus = statusFilter.length === 0 || statusFilter.includes(item.status);
-      const matchesPriority = priorityFilter.length === 0 || priorityFilter.includes(item.priority);
-      const matchesType = typeFilter.length === 0 || typeFilter.includes(item.type);
-      const matchesReviewer = reviewerFilter.length === 0 || reviewerFilter.includes(item.reviewer);
 
-      return matchesSearch && matchesStatus && matchesPriority && matchesType && matchesReviewer;
+      const matchesStatus =
+        statusFilter.length === 0 || statusFilter.includes(item.status);
+      const matchesPriority =
+        priorityFilter.length === 0 || priorityFilter.includes(item.priority);
+      const matchesType =
+        typeFilter.length === 0 || typeFilter.includes(item.type);
+      const matchesReviewer =
+        reviewerFilter.length === 0 || reviewerFilter.includes(item.reviewer);
+
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesPriority &&
+        matchesType &&
+        matchesReviewer
+      );
     });
-  }, [data, searchValue, statusFilter, priorityFilter, typeFilter, reviewerFilter]);
+  }, [
+    data,
+    searchValue,
+    statusFilter,
+    priorityFilter,
+    typeFilter,
+    reviewerFilter,
+  ]);
 
   const table = useReactTable({
     data: filteredData,
@@ -98,4 +119,4 @@ export function MemoriesDataTable() {
       <DataTablePagination table={table} />
     </div>
   );
-} 
+}

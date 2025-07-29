@@ -22,7 +22,11 @@ interface DashboardLayoutProps {
   fullScreen?: boolean;
 }
 
-export function DashboardLayout({ title, children, fullScreen = false }: DashboardLayoutProps) {
+export function DashboardLayout({
+  title,
+  children,
+  fullScreen = false,
+}: DashboardLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
@@ -124,12 +128,13 @@ export function DashboardLayout({ title, children, fullScreen = false }: Dashboa
                 </div>
               </div>
             </header>
-            <div className="flex flex-1 flex-col" style={{ minHeight: 'calc(100vh + 5rem)' }}>
+            <div
+              className="flex flex-1 flex-col"
+              style={{ minHeight: "calc(100vh + 5rem)" }}
+            >
               <div className="@container/main flex flex-1 flex-col gap-2 pb-24">
                 {fullScreen ? (
-                  <div className="flex flex-1 flex-col">
-                    {children}
-                  </div>
+                  <div className="flex flex-1 flex-col">{children}</div>
                 ) : (
                   <div className="flex flex-col gap-4 px-4 py-4 md:gap-6 md:py-6 lg:px-6">
                     {children}
@@ -139,7 +144,10 @@ export function DashboardLayout({ title, children, fullScreen = false }: Dashboa
             </div>
 
             {/* AI Chat Input - Fixed to the center of the content area */}
-            <div className="fixed bottom-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" style={{ left: 'var(--sidebar-width)', right: 0 }}>
+            <div
+              className="fixed bottom-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+              style={{ left: "var(--sidebar-width)", right: 0 }}
+            >
               <div className="p-4 mx-auto max-w-2xl">
                 <AIInput onSubmit={handleFormSubmit} className="shadow-lg">
                   <AIInputTextarea

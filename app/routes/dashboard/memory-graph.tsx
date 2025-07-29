@@ -1,14 +1,18 @@
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
-import { useEffect, useState, useRef } from "react";
 import { useTheme } from "next-themes";
+import { useEffect, useRef, useState } from "react";
 
 // Dynamic import for client-side only component
 const ForceGraphComponent = () => {
   const { theme, resolvedTheme } = useTheme();
-  const [ForceGraph3D, setForceGraph3D] = useState<React.ComponentType<Record<string, unknown>> | null>(null);
+  const [ForceGraph3D, setForceGraph3D] = useState<React.ComponentType<
+    Record<string, unknown>
+  > | null>(null);
   const [isClient, setIsClient] = useState(false);
-  const fgRef = useRef<{ zoomToFit?: (duration: number, padding: number) => void }>(null);
-  
+  const fgRef = useRef<{
+    zoomToFit?: (duration: number, padding: number) => void;
+  }>(null);
+
   // Import graph data from the JSON file
   const [graphData, setGraphData] = useState<{
     nodes: Array<{ id: string; user?: string; description?: string }>;
@@ -23,12 +27,12 @@ const ForceGraphComponent = () => {
 
   useEffect(() => {
     setIsClient(true);
-    
+
     // Dynamic import to avoid SSR issues
     import("react-force-graph-3d").then((module) => {
       setForceGraph3D(() => module.default);
     });
-    
+
     // Load the graph data
     import("@/components/dashboard/graph/data.json").then((data) => {
       setGraphData(data.default);
@@ -42,7 +46,7 @@ const ForceGraphComponent = () => {
       const timer = setTimeout(() => {
         fgRef.current?.zoomToFit?.(1000, 200);
       }, 500);
-      
+
       return () => clearTimeout(timer);
     }
   }, [graphData, ForceGraph3D, isClient]);
@@ -73,7 +77,7 @@ const ForceGraphComponent = () => {
       enableNodeDrag={true}
       enableNavigationControls={true}
       showNavInfo={true}
-            nodeRelSize={10}
+      nodeRelSize={10}
     />
   );
 };
@@ -81,20 +85,20 @@ const ForceGraphComponent = () => {
 export default function MemoryGraphPage() {
   return (
     <DashboardLayout title="Memory Graph" fullScreen>
-      <div 
-        className="flex items-center justify-center overflow-hidden" 
-        style={{ 
-          height: 'calc(100vh - 12rem)',
-          width: '100%'
+      <div
+        className="flex items-center justify-center overflow-hidden"
+        style={{
+          height: "calc(100vh - 12rem)",
+          width: "100%",
         }}
       >
-        <div 
+        <div
           className="flex items-center justify-center"
-          style={{ 
-            height: '100%',
-            width: '100%',
-            maxWidth: '100%',
-            maxHeight: '100%'
+          style={{
+            height: "100%",
+            width: "100%",
+            maxWidth: "100%",
+            maxHeight: "100%",
           }}
         >
           <ForceGraphComponent />
