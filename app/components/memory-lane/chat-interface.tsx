@@ -303,7 +303,7 @@ function ChatMessage({ message }: { message: Message }) {
 // Main Chat Interface Component
 export function ChatInterface() {
   return (
-    <div className="w-full max-w-[800px] mx-auto px-4">
+    <div className="w-full max-w-none sm:max-w-[800px] mx-auto px-4">
       <div className="space-y-6">
         {mockMessages.map((message) => (
           <ChatMessage key={message.id} message={message} />
