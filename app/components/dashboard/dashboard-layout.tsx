@@ -125,7 +125,9 @@ export function DashboardLayout({ title, children }: DashboardLayoutProps) {
             </header>
             <div className="flex flex-1 flex-col" style={{ minHeight: 'calc(100vh + 75px)' }}>
               <div className="@container/main flex flex-1 flex-col gap-2 pb-24">
-                {children}
+                <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                  {children}
+                </div>
               </div>
             </div>
 

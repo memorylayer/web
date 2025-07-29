@@ -40,7 +40,7 @@ const ForceGraphComponent = () => {
     if (graphData && ForceGraph3D && isClient && fgRef.current?.zoomToFit) {
       // Small delay to ensure graph is rendered
       const timer = setTimeout(() => {
-        fgRef.current?.zoomToFit?.(1000, 100);
+        fgRef.current?.zoomToFit?.(1000, 200);
       }, 500);
       
       return () => clearTimeout(timer);
