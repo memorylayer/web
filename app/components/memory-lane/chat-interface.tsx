@@ -178,20 +178,11 @@ function MemoryReferenceSheet({ reference }: { reference: MemoryReference }) {
           {reference.title}
         </button>
       </SheetTrigger>
-      <SheetContent 
-        className="w-full max-w-md sm:max-w-lg rounded-lg shadow-lg" 
-        style={{
-          right: '1rem',
-          top: '1rem', 
-          bottom: '1rem',
-          height: 'calc(100vh - 2rem)',
-          maxHeight: 'calc(100vh - 2rem)'
-        }}
-      >
+      <SheetContent className="w-full max-w-md sm:max-w-lg mr-4 mt-4 mb-4 rounded-l-lg shadow-lg">
         <SheetHeader>
           <SheetTitle className="text-left">Memory Details</SheetTitle>
         </SheetHeader>
-        <div className="mt-6 space-y-4">
+        <div className="m-4 space-y-4">
           <div>
             <h3 className="font-medium text-sm text-muted-foreground mb-2">
               Title
