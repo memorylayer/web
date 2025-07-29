@@ -304,12 +304,8 @@ function ChatMessage({ message }: { message: Message }) {
 export function ChatInterface() {
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   React.useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
   return (
