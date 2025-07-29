@@ -256,11 +256,11 @@ function ChatMessage({ message }: { message: Message }) {
               <User className="w-4 h-4" />
             </AvatarFallback>
           </>
-                 ) : (
-           <AvatarFallback className="bg-white text-black border">
-             <Brain className="w-4 h-4" />
-           </AvatarFallback>
-         )}
+        ) : (
+          <AvatarFallback className="bg-white text-black border">
+            <Brain className="w-4 h-4" />
+          </AvatarFallback>
+        )}
       </Avatar>
 
       {/* Message Content */}
