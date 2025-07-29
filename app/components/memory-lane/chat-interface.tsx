@@ -178,7 +178,7 @@ function MemoryReferenceSheet({ reference }: { reference: MemoryReference }) {
           {reference.title}
         </button>
       </SheetTrigger>
-      <SheetContent className="w-full max-w-md">
+      <SheetContent className="w-full max-w-md sm:max-w-lg mr-4 mt-4 mb-4 rounded-l-lg shadow-lg">
         <SheetHeader>
           <SheetTitle className="text-left">Memory Details</SheetTitle>
         </SheetHeader>
