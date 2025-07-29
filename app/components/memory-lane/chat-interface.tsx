@@ -302,12 +302,23 @@ function ChatMessage({ message }: { message: Message }) {
 
 // Main Chat Interface Component
 export function ChatInterface() {
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  React.useEffect(() => {
+    scrollToBottom();
+  }, []);
+
   return (
     <div className="w-full sm:max-w-[800px] sm:mx-auto sm:px-4">
       <div className="space-y-6">
         {mockMessages.map((message) => (
           <ChatMessage key={message.id} message={message} />
         ))}
+        <div ref={messagesEndRef} />
       </div>
     </div>
   );
