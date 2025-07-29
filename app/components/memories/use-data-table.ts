@@ -16,6 +16,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
+  useQueryStates,
+} from "nuqs";
 import React from "react";
 
 interface UseDataTableProps<TData> {
@@ -24,6 +30,11 @@ interface UseDataTableProps<TData> {
   pageCount?: number;
   initialState?: InitialTableState;
   getRowId?: (originalRow: TData, index: number, parent?: Row<TData>) => string;
+  clearOnDefault?: boolean;
+  throttleMs?: number;
+  shallow?: boolean;
+  scroll?: boolean;
+  history?: "push" | "replace";
 }
 
 export function useDataTable<TData>({
@@ -32,19 +43,40 @@ export function useDataTable<TData>({
   pageCount = -1,
   initialState,
   getRowId,
+  clearOnDefault = false,
+  throttleMs = 50,
+  shallow = true,
+  scroll = false,
+  history = "replace",
 }: UseDataTableProps<TData>) {
-  // React state management for table functionality
+  // URL state management with nuqs
+  const [queryStates, setQueryStates] = useQueryStates(
+    {
+      page: parseAsInteger.withDefault(1),
+      per_page: parseAsInteger.withDefault(10),
+      sort: parseAsString.withDefault(""),
+      title: parseAsString.withDefault(""),
+      status: parseAsArrayOf(parseAsString).withDefault([]),
+      priority: parseAsArrayOf(parseAsString).withDefault([]),
+      type: parseAsArrayOf(parseAsString).withDefault([]),
+      reviewer: parseAsArrayOf(parseAsString).withDefault([]),
+    },
+    {
+      shallow,
+      throttleMs,
+      scroll,
+      history,
+      clearOnDefault,
+    },
+  );
+
+  const { page, per_page, sort, title, status, priority, type, reviewer } =
+    queryStates;
+
+  // React state management for non-URL state
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
 
   // Create searchable data with proper IDs
   const searchableData = React.useMemo(
@@ -54,6 +86,46 @@ export function useDataTable<TData>({
         ...row,
       })),
     [data, getRowId],
+  );
+
+  // Column filters derived from URL state
+  const columnFilters: ColumnFiltersState = React.useMemo(() => {
+    const filters: ColumnFiltersState = [];
+
+    if (title) {
+      filters.push({ id: "title", value: title });
+    }
+    if (status.length > 0) {
+      filters.push({ id: "status", value: status });
+    }
+    if (priority.length > 0) {
+      filters.push({ id: "priority", value: priority });
+    }
+    if (type.length > 0) {
+      filters.push({ id: "type", value: type });
+    }
+    if (reviewer.length > 0) {
+      filters.push({ id: "reviewer", value: reviewer });
+    }
+
+    return filters;
+  }, [title, status, priority, type, reviewer]);
+
+  // Sorting derived from URL state
+  const sorting: SortingState = React.useMemo(() => {
+    if (!sort) return [];
+
+    const [id, desc] = sort.split(":");
+    return [{ id, desc: desc === "desc" }];
+  }, [sort]);
+
+  // Pagination derived from URL state
+  const pagination: PaginationState = React.useMemo(
+    () => ({
+      pageIndex: page - 1,
+      pageSize: per_page,
+    }),
+    [page, per_page],
   );
 
   const table = useReactTable({
@@ -70,9 +142,45 @@ export function useDataTable<TData>({
     initialState,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
-    onPaginationChange: setPagination,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onPaginationChange: (updater) => {
+      const newPagination =
+        typeof updater === "function" ? updater(pagination) : updater;
+      setQueryStates({
+        page: newPagination.pageIndex + 1,
+        per_page: newPagination.pageSize,
+      });
+    },
+    onSortingChange: (updater) => {
+      const newSorting =
+        typeof updater === "function" ? updater(sorting) : updater;
+      const sortString = newSorting[0]
+        ? `${newSorting[0].id}:${newSorting[0].desc ? "desc" : "asc"}`
+        : "";
+      setQueryStates({ sort: sortString });
+    },
+    onColumnFiltersChange: (updater) => {
+      const newColumnFilters =
+        typeof updater === "function" ? updater(columnFilters) : updater;
+      const updates: Record<string, string | string[]> = {};
+
+      // Reset all filter states
+      updates.title = "";
+      updates.status = [];
+      updates.priority = [];
+      updates.type = [];
+      updates.reviewer = [];
+
+      // Set new filter values
+      for (const filter of newColumnFilters) {
+        if (filter.id === "title" && typeof filter.value === "string") {
+          updates.title = filter.value;
+        } else if (Array.isArray(filter.value)) {
+          updates[filter.id as keyof typeof updates] = filter.value;
+        }
+      }
+
+      setQueryStates(updates);
+    },
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -87,5 +195,7 @@ export function useDataTable<TData>({
 
   return {
     table,
+    queryStates,
+    setQueryStates,
   };
 }

@@ -2,6 +2,7 @@ import { useSystemTheme } from "@/hooks/use-system-theme";
 import { ReactRouterProvider } from "fumadocs-core/framework/react-router";
 import { RootProvider } from "fumadocs-ui/provider/base";
 import { ThemeProvider } from "next-themes";
+import { NuqsAdapter } from "nuqs/adapters/react-router/v7";
 import {
   Link,
   Links,
@@ -54,7 +55,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <NuqsAdapter>
+      <Outlet />
+    </NuqsAdapter>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
