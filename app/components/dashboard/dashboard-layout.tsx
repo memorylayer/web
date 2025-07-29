@@ -124,7 +124,7 @@ export function DashboardLayout({ title, children, fullScreen = false }: Dashboa
                 </div>
               </div>
             </header>
-            <div className="flex flex-1 flex-col" style={{ minHeight: 'calc(100vh + 75px)' }}>
+            <div className="flex flex-1 flex-col" style={{ minHeight: 'calc(100vh + 5rem)' }}>
               <div className="@container/main flex flex-1 flex-col gap-2 pb-24">
                 {fullScreen ? (
                   <div className="flex flex-1 flex-col">
