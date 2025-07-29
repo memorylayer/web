@@ -38,6 +38,7 @@
     "@vercel/og": "^0.8.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "fumadocs-core": "15.6.4",
     "fumadocs-openapi": "^9.1.3",
     "fumadocs-ui": "15.6.4",
