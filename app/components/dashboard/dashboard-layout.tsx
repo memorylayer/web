@@ -19,9 +19,10 @@ import { useLocation, useNavigate } from "react-router";
 interface DashboardLayoutProps {
   title: string;
   children: React.ReactNode;
+  fullScreen?: boolean;
 }
 
-export function DashboardLayout({ title, children }: DashboardLayoutProps) {
+export function DashboardLayout({ title, children, fullScreen = false }: DashboardLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
@@ -125,9 +126,15 @@ export function DashboardLayout({ title, children }: DashboardLayoutProps) {
             </header>
             <div className="flex flex-1 flex-col" style={{ minHeight: 'calc(100vh + 75px)' }}>
               <div className="@container/main flex flex-1 flex-col gap-2 pb-24">
-                <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                  {children}
-                </div>
+                {fullScreen ? (
+                  <div className="flex flex-1 flex-col">
+                    {children}
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-4 px-4 py-4 md:gap-6 md:py-6 lg:px-6">
+                    {children}
+                  </div>
+                )}
               </div>
             </div>
 

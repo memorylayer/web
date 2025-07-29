@@ -80,7 +80,7 @@ const ForceGraphComponent = () => {
 
 export default function MemoryGraphPage() {
   return (
-    <DashboardLayout title="Memory Graph">
+    <DashboardLayout title="Memory Graph" fullScreen>
       <div 
         className="flex items-center justify-center overflow-hidden" 
         style={{ 
