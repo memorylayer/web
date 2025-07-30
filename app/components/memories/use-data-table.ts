@@ -44,7 +44,7 @@ export function useDataTable<TData>({
   initialState,
   getRowId,
   clearOnDefault = false,
-  throttleMs = 50,
+  throttleMs = 300,
   shallow = true,
   scroll = false,
   history = "replace",
@@ -78,7 +78,7 @@ export function useDataTable<TData>({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
-  // Create searchable data with proper IDs
+  // Create searchable data with proper IDs (memoized more efficiently)
   const searchableData = React.useMemo(
     () =>
       data.map((row) => ({
@@ -161,25 +161,36 @@ export function useDataTable<TData>({
     onColumnFiltersChange: (updater) => {
       const newColumnFilters =
         typeof updater === "function" ? updater(columnFilters) : updater;
+      
+      // Only update changed values, don't reset everything
       const updates: Record<string, string | string[]> = {};
-
-      // Reset all filter states
-      updates.title = "";
-      updates.status = [];
-      updates.priority = [];
-      updates.type = [];
-      updates.reviewer = [];
-
-      // Set new filter values
-      for (const filter of newColumnFilters) {
-        if (filter.id === "title" && typeof filter.value === "string") {
-          updates.title = filter.value;
-        } else if (Array.isArray(filter.value)) {
-          updates[filter.id as keyof typeof updates] = filter.value;
-        }
+      
+      // Map current filters to track what changed
+      const currentFilterMap = new Map(columnFilters.map(f => [f.id, f.value]));
+      const newFilterMap = new Map(newColumnFilters.map(f => [f.id, f.value]));
+      
+      // Check each filter type for changes
+      const filterIds = ['title', 'status', 'priority', 'type', 'reviewer'];
+      
+      for (const filterId of filterIds) {
+        const currentValue = currentFilterMap.get(filterId);
+        const newValue = newFilterMap.get(filterId);
+        
+                 // Only update if value actually changed
+         if (JSON.stringify(currentValue) !== JSON.stringify(newValue)) {
+           if (newValue !== undefined && newValue !== null) {
+             updates[filterId] = newValue as string | string[];
+           } else {
+             // Clear the filter if it was removed
+             updates[filterId] = filterId === 'title' ? '' : [];
+           }
+         }
       }
-
-      setQueryStates(updates);
+      
+      // Only update URL if there are actual changes
+      if (Object.keys(updates).length > 0) {
+        setQueryStates(updates);
+      }
     },
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
