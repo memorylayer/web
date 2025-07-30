@@ -25,6 +25,11 @@ const ForceGraphComponent = () => {
     return currentTheme === "dark" ? "#020202" : "#ffffff";
   };
 
+  const getLinkColor = () => {
+    const currentTheme = resolvedTheme || theme;
+    return currentTheme === "dark" ? "#ffffff" : "#2b2b2b";
+  };
+
   useEffect(() => {
     setIsClient(true);
 
@@ -70,7 +75,9 @@ const ForceGraphComponent = () => {
       width={"100%"}
       nodeAutoColorBy="user"
       backgroundColor={getBackgroundColor()}
-      linkWidth={20}
+      linkWidth={2}
+      linkColor={() => getLinkColor()}
+      linkOpacity={0.8}
       // linkAutoColorBy="user"
       linkDirectionalParticles={2}
       linkDirectionalParticleSpeed={0.01}
