@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/table";
 import { flexRender } from "@tanstack/react-table";
 import type { Table as TableType } from "@tanstack/react-table";
-import React from "react";
 import type { Memory } from "./data";
 
 interface DataTableProps {
@@ -19,32 +18,10 @@ interface DataTableProps {
 }
 
 export function DataTable({ table, children }: DataTableProps) {
-  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
-  const [scrollPosition, setScrollPosition] = React.useState(0);
-
-  // Preserve scroll position during re-renders with improved timing
-  React.useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (container && scrollPosition > 0) {
-      // Use requestAnimationFrame to ensure DOM is ready
-      requestAnimationFrame(() => {
-        container.scrollTop = scrollPosition;
-      });
-    }
-  });
-
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    setScrollPosition(e.currentTarget.scrollTop);
-  };
-
   return (
     <div className="space-y-4">
       {children}
-      <div
-        ref={scrollContainerRef}
-        className="overflow-auto rounded-lg border max-h-[600px]"
-        onScroll={handleScroll}
-      >
+      <div className="overflow-auto rounded-lg border max-h-[600px]">
         <Table>
           <TableHeader className="bg-muted/50">
             {table.getHeaderGroups().map((headerGroup) => (
