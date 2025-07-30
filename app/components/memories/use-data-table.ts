@@ -16,13 +16,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  parseAsArrayOf,
-  parseAsInteger,
-  parseAsString,
-  useQueryStates,
-} from "nuqs";
 import React from "react";
+import { useSearchParams } from "react-router";
 
 interface UseDataTableProps<TData> {
   data: TData[];
@@ -30,11 +25,6 @@ interface UseDataTableProps<TData> {
   pageCount?: number;
   initialState?: InitialTableState;
   getRowId?: (originalRow: TData, index: number, parent?: Row<TData>) => string;
-  clearOnDefault?: boolean;
-  throttleMs?: number;
-  shallow?: boolean;
-  scroll?: boolean;
-  history?: "push" | "replace";
 }
 
 export function useDataTable<TData>({
@@ -43,68 +33,78 @@ export function useDataTable<TData>({
   pageCount = -1,
   initialState,
   getRowId,
-  clearOnDefault = false,
-  throttleMs = 300,
-  shallow = true,
-  scroll = false,
-  history = "replace",
 }: UseDataTableProps<TData>) {
-  // URL state management with nuqs
-  const [queryStates, setQueryStates] = useQueryStates(
-    {
-      page: parseAsInteger.withDefault(1),
-      per_page: parseAsInteger.withDefault(10),
-      sort: parseAsString.withDefault(""),
-      title: parseAsString.withDefault(""),
-      status: parseAsArrayOf(parseAsString).withDefault([]),
-      priority: parseAsArrayOf(parseAsString).withDefault([]),
-      type: parseAsArrayOf(parseAsString).withDefault([]),
-      reviewer: parseAsArrayOf(parseAsString).withDefault([]),
-    },
-    {
-      shallow,
-      throttleMs,
-      scroll,
-      history,
-      clearOnDefault,
-    },
-  );
+  // URL state management with React Router's useSearchParams
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const { page, per_page, sort, title, status, priority, type, reviewer } =
-    queryStates;
+  // Helper functions to get values from URLSearchParams
+  const getParamAsInteger = (key: string, defaultValue: number): number => {
+    const value = searchParams.get(key);
+    const parsed = value ? Number.parseInt(value, 10) : Number.NaN;
+    return Number.isNaN(parsed) ? defaultValue : parsed;
+  };
+
+  const getParamAsString = (key: string, defaultValue = ""): string => {
+    return searchParams.get(key) || defaultValue;
+  };
+
+  const getParamAsArray = (key: string): string[] => {
+    return searchParams.getAll(key).filter(Boolean);
+  };
+
+  // Extract current URL state
+  const page = getParamAsInteger("page", 1);
+  const per_page = getParamAsInteger("per_page", 10);
+  const sort = getParamAsString("sort");
+  const title = getParamAsString("title");
+  const status = getParamAsArray("status");
+  const priority = getParamAsArray("priority");
+  const type = getParamAsArray("type");
+  const reviewer = getParamAsArray("reviewer");
+
+  // Helper function to update search params
+  const updateSearchParams = React.useCallback(
+    (updates: Record<string, string | string[] | number>) => {
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+
+        for (const [key, value] of Object.entries(updates)) {
+          // Remove existing values for this key
+          newParams.delete(key);
+
+          if (Array.isArray(value)) {
+            // Add multiple values for arrays
+            for (const v of value) {
+              if (v) newParams.append(key, v);
+            }
+          } else if (value !== undefined && value !== "" && value !== 0) {
+            // Add single value (skip empty/default values)
+            newParams.set(key, String(value));
+          }
+        }
+
+        return newParams;
+      });
+    },
+    [setSearchParams],
+  );
 
   // React state management for non-URL state
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
-  // Helper function to detect filter changes and build updates
-  const buildFilterUpdates = React.useCallback(
-    (currentFilters: ColumnFiltersState, newFilters: ColumnFiltersState) => {
-      const updates: Record<string, string | string[]> = {};
-      const currentFilterMap = new Map(
-        currentFilters.map((f) => [f.id, f.value]),
-      );
-      const newFilterMap = new Map(newFilters.map((f) => [f.id, f.value]));
-      const filterIds = ["title", "status", "priority", "type", "reviewer"];
-
-      for (const filterId of filterIds) {
-        const currentValue = currentFilterMap.get(filterId);
-        const newValue = newFilterMap.get(filterId);
-
-        if (JSON.stringify(currentValue) !== JSON.stringify(newValue)) {
-          if (newValue !== undefined && newValue !== null) {
-            updates[filterId] = newValue as string | string[];
-          } else {
-            updates[filterId] = filterId === "title" ? "" : [];
-          }
-        }
-      }
-
-      return updates;
-    },
-    [],
-  );
+  // Current state object for compatibility
+  const queryStates = {
+    page,
+    per_page,
+    sort,
+    title,
+    status,
+    priority,
+    type,
+    reviewer,
+  };
 
   // Create searchable data with proper IDs (memoized more efficiently)
   const searchableData = React.useMemo(
@@ -173,7 +173,7 @@ export function useDataTable<TData>({
     onPaginationChange: (updater) => {
       const newPagination =
         typeof updater === "function" ? updater(pagination) : updater;
-      setQueryStates({
+      updateSearchParams({
         page: newPagination.pageIndex + 1,
         per_page: newPagination.pageSize,
       });
@@ -184,17 +184,30 @@ export function useDataTable<TData>({
       const sortString = newSorting[0]
         ? `${newSorting[0].id}:${newSorting[0].desc ? "desc" : "asc"}`
         : "";
-      setQueryStates({ sort: sortString });
+      updateSearchParams({ sort: sortString });
     },
     onColumnFiltersChange: (updater) => {
       const newColumnFilters =
         typeof updater === "function" ? updater(columnFilters) : updater;
 
-      const updates = buildFilterUpdates(columnFilters, newColumnFilters);
+      const updates: Record<string, string | string[]> = {};
 
-      if (Object.keys(updates).length > 0) {
-        setQueryStates(updates);
+      // Build filter updates from the new column filters
+      for (const filter of newColumnFilters) {
+        if (filter.value !== undefined && filter.value !== null) {
+          updates[filter.id] = filter.value as string | string[];
+        }
       }
+
+      // Clear filters not in newColumnFilters
+      const newFilterIds = new Set(newColumnFilters.map((f) => f.id));
+      for (const id of ["title", "status", "priority", "type", "reviewer"]) {
+        if (!newFilterIds.has(id)) {
+          updates[id] = id === "title" ? "" : [];
+        }
+      }
+
+      updateSearchParams(updates);
     },
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
@@ -211,6 +224,6 @@ export function useDataTable<TData>({
   return {
     table,
     queryStates,
-    setQueryStates,
+    updateSearchParams,
   };
 }
