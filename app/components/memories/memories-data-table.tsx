@@ -34,7 +34,7 @@ export function MemoriesDataTable() {
   });
 
   const { title, status, priority, type, reviewer } = queryStates;
-  
+
   // Local state for immediate search input feedback
   const [searchInput, setSearchInput] = React.useState(title);
   const debouncedSearchValue = useDebounce(searchInput, 300);

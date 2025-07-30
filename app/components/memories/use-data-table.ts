@@ -78,6 +78,32 @@ export function useDataTable<TData>({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
+  // Helper function to detect filter changes and build updates
+  const buildFilterUpdates = React.useCallback(
+    (currentFilters: ColumnFiltersState, newFilters: ColumnFiltersState) => {
+      const updates: Record<string, string | string[]> = {};
+      const currentFilterMap = new Map(currentFilters.map(f => [f.id, f.value]));
+      const newFilterMap = new Map(newFilters.map(f => [f.id, f.value]));
+      const filterIds = ['title', 'status', 'priority', 'type', 'reviewer'];
+      
+      for (const filterId of filterIds) {
+        const currentValue = currentFilterMap.get(filterId);
+        const newValue = newFilterMap.get(filterId);
+        
+        if (JSON.stringify(currentValue) !== JSON.stringify(newValue)) {
+          if (newValue !== undefined && newValue !== null) {
+            updates[filterId] = newValue as string | string[];
+          } else {
+            updates[filterId] = filterId === 'title' ? '' : [];
+          }
+        }
+      }
+      
+      return updates;
+    },
+    []
+  );
+
   // Create searchable data with proper IDs (memoized more efficiently)
   const searchableData = React.useMemo(
     () =>
@@ -162,32 +188,8 @@ export function useDataTable<TData>({
       const newColumnFilters =
         typeof updater === "function" ? updater(columnFilters) : updater;
       
-      // Only update changed values, don't reset everything
-      const updates: Record<string, string | string[]> = {};
+      const updates = buildFilterUpdates(columnFilters, newColumnFilters);
       
-      // Map current filters to track what changed
-      const currentFilterMap = new Map(columnFilters.map(f => [f.id, f.value]));
-      const newFilterMap = new Map(newColumnFilters.map(f => [f.id, f.value]));
-      
-      // Check each filter type for changes
-      const filterIds = ['title', 'status', 'priority', 'type', 'reviewer'];
-      
-      for (const filterId of filterIds) {
-        const currentValue = currentFilterMap.get(filterId);
-        const newValue = newFilterMap.get(filterId);
-        
-                 // Only update if value actually changed
-         if (JSON.stringify(currentValue) !== JSON.stringify(newValue)) {
-           if (newValue !== undefined && newValue !== null) {
-             updates[filterId] = newValue as string | string[];
-           } else {
-             // Clear the filter if it was removed
-             updates[filterId] = filterId === 'title' ? '' : [];
-           }
-         }
-      }
-      
-      // Only update URL if there are actual changes
       if (Object.keys(updates).length > 0) {
         setQueryStates(updates);
       }
