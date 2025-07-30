@@ -82,26 +82,28 @@ export function useDataTable<TData>({
   const buildFilterUpdates = React.useCallback(
     (currentFilters: ColumnFiltersState, newFilters: ColumnFiltersState) => {
       const updates: Record<string, string | string[]> = {};
-      const currentFilterMap = new Map(currentFilters.map(f => [f.id, f.value]));
-      const newFilterMap = new Map(newFilters.map(f => [f.id, f.value]));
-      const filterIds = ['title', 'status', 'priority', 'type', 'reviewer'];
-      
+      const currentFilterMap = new Map(
+        currentFilters.map((f) => [f.id, f.value]),
+      );
+      const newFilterMap = new Map(newFilters.map((f) => [f.id, f.value]));
+      const filterIds = ["title", "status", "priority", "type", "reviewer"];
+
       for (const filterId of filterIds) {
         const currentValue = currentFilterMap.get(filterId);
         const newValue = newFilterMap.get(filterId);
-        
+
         if (JSON.stringify(currentValue) !== JSON.stringify(newValue)) {
           if (newValue !== undefined && newValue !== null) {
             updates[filterId] = newValue as string | string[];
           } else {
-            updates[filterId] = filterId === 'title' ? '' : [];
+            updates[filterId] = filterId === "title" ? "" : [];
           }
         }
       }
-      
+
       return updates;
     },
-    []
+    [],
   );
 
   // Create searchable data with proper IDs (memoized more efficiently)
@@ -187,9 +189,9 @@ export function useDataTable<TData>({
     onColumnFiltersChange: (updater) => {
       const newColumnFilters =
         typeof updater === "function" ? updater(columnFilters) : updater;
-      
+
       const updates = buildFilterUpdates(columnFilters, newColumnFilters);
-      
+
       if (Object.keys(updates).length > 0) {
         setQueryStates(updates);
       }
