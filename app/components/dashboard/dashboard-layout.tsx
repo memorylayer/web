@@ -145,17 +145,17 @@ export function DashboardLayout({
 
             {/* AI Chat Input - Fixed to the center of the content area */}
             <div
-              className="fixed bottom-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+              className="fixed bottom-0 z-40 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
               style={{ left: "var(--sidebar-width)", right: 0 }}
             >
-              <div className="p-4 mx-auto max-w-2xl">
+              <div className="p-4 mx-auto max-w-[800px]">
                 <AIInput onSubmit={handleFormSubmit} className="shadow-lg">
                   <AIInputTextarea
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
                     className="font-mono text-sm"
-                    placeholder="Ask anything, let's go down the memory lane..."
+                    placeholder="Let's go down the memory lane, ask anything..."
                     disabled={isSubmitting}
                   />
                   <AIInputToolbar>
