@@ -22,11 +22,14 @@ export function DataTable({ table, children }: DataTableProps) {
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = React.useState(0);
 
-  // Preserve scroll position during re-renders
+  // Preserve scroll position during re-renders with improved timing
   React.useEffect(() => {
     const container = scrollContainerRef.current;
     if (container && scrollPosition > 0) {
-      container.scrollTop = scrollPosition;
+      // Use requestAnimationFrame to ensure DOM is ready
+      requestAnimationFrame(() => {
+        container.scrollTop = scrollPosition;
+      });
     }
   });
 
@@ -39,7 +42,7 @@ export function DataTable({ table, children }: DataTableProps) {
       {children}
       <div
         ref={scrollContainerRef}
-        className="overflow-auto rounded-lg border max-h-[70vh]"
+        className="overflow-auto rounded-lg border max-h-[600px]"
         onScroll={handleScroll}
       >
         <Table>
