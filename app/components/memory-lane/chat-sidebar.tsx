@@ -30,7 +30,7 @@ import {
   chatHistoryActions
 } from "@/states";
 
-export function ChatHistorySidebar() {
+export function ChatSidebar() {
   const isOpen = use$(sidebarState$.isOpen);
   const view = use$(sidebarState$.view);
   const memoryDetail = use$(memoryState$.selectedMemory);
@@ -54,7 +54,15 @@ export function ChatHistorySidebar() {
         sidebarRef.current && 
         !sidebarRef.current.contains(event.target as Node)
       ) {
-        sidebarActions.close();
+        // Don't close if clicking on dropdown menu content (rendered in portal)
+        const target = event.target as Element;
+        const isDropdownContent = target.closest('[role="menu"]') || 
+                                 target.closest('[data-radix-popper-content-wrapper]') ||
+                                 target.closest('[data-radix-menu-content]');
+        
+        if (!isDropdownContent) {
+          sidebarActions.close();
+        }
       }
     }
 
@@ -230,10 +238,10 @@ export function ChatHistorySidebar() {
                           <span className="sr-only">Session options</span>
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+                      <DropdownMenuContent align="end" className="z-[120]">
                         <DropdownMenuItem
                           onClick={() => chatHistoryActions.deleteSession(session.id)}
-                          className="text-destructive"
+                          className="text-destructive hover:text-destructive/80 focus:text-destructive/80"
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
                           Delete Session

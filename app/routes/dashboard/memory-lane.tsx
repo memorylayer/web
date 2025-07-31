@@ -1,6 +1,6 @@
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { ChatInterface } from "@/components/memory-lane/chat-interface";
-import { ChatHistorySidebar } from "@/components/memory-lane/chat-history-sidebar";
+import { ChatSidebar } from "@/components/memory-lane/chat-sidebar";
 import { sidebarActions, memoryActions, type MemoryReference } from "@/states";
 
 export default function MemoryLanePage() {
@@ -19,8 +19,8 @@ export default function MemoryLanePage() {
           </div>
         </div>
         
-        {/* Chat History Sidebar */}
-        <ChatHistorySidebar />
+        {/* Chat Sidebar */}
+        <ChatSidebar />
       </div>
     </DashboardLayout>
   );
