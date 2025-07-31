@@ -20,7 +20,7 @@ import {
   PanelRightOpen,
   Trash2 
 } from "lucide-react";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,6 +36,36 @@ interface ChatHistorySidebarProps {
 
 export function ChatHistorySidebar({ isOpen, onToggle }: ChatHistorySidebarProps) {
   const { chatHistory, currentSessionId, selectSession, deleteSession } = useChatHistory();
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  // Click outside to close sidebar
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        isOpen && 
+        sidebarRef.current && 
+        !sidebarRef.current.contains(event.target as Node)
+      ) {
+        onToggle();
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (isOpen && event.key === 'Escape') {
+        onToggle();
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onToggle]);
 
   return (
     <>
@@ -59,6 +89,7 @@ export function ChatHistorySidebar({ isOpen, onToggle }: ChatHistorySidebarProps
 
       {/* Sidebar - Positioned absolutely on the right side */}
       <div
+        ref={sidebarRef}
         className={cn(
           "fixed top-0 right-0 bottom-0 z-[100] transition-transform duration-300 ease-in-out w-80 border-l bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
           isOpen ? "translate-x-0" : "translate-x-full"
