@@ -526,6 +526,14 @@ aside {
   body {
     @apply bg-background text-foreground;
   }
+
+  button {
+    @apply cursor-pointer;
+  }
+
+  a {
+    @apply cursor-pointer;
+  }
 }
 
 /* Prevent layout shift with always-visible scrollbar space */

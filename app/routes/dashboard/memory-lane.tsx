@@ -1,13 +1,12 @@
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { ChatInterface } from "@/components/memory-lane/chat-interface";
 import { ChatHistorySidebar } from "@/components/memory-lane/chat-history-sidebar";
-import { useState } from "react";
+import { sidebarActions, memoryActions, type MemoryReference } from "@/states";
 
 export default function MemoryLanePage() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+  const showMemoryDetail = (memoryRef: MemoryReference) => {
+    memoryActions.selectMemory(memoryRef);
+    sidebarActions.showMemoryDetail();
   };
 
   return (
@@ -16,15 +15,12 @@ export default function MemoryLanePage() {
         {/* Chat Messages Area */}
         <div className="flex-1 overflow-y-auto">
           <div className="py-6">
-            <ChatInterface />
+            <ChatInterface onMemoryClick={showMemoryDetail} />
           </div>
         </div>
         
         {/* Chat History Sidebar */}
-        <ChatHistorySidebar 
-          isOpen={isSidebarOpen} 
-          onToggle={toggleSidebar} 
-        />
+        <ChatHistorySidebar />
       </div>
     </DashboardLayout>
   );

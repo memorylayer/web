@@ -2,16 +2,9 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { formatDistance } from "date-fns";
 import { Brain, User } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 
 // Types
 interface Memory {
@@ -163,86 +156,34 @@ const mockMessages: Message[] = [
   },
 ];
 
-// Memory Reference Component
-function MemoryReferenceSheet({ reference }: { reference: MemoryReference }) {
-  const { memory } = reference;
+// Memory Reference Button Component
+function MemoryReferenceButton({ 
+  reference, 
+  onMemoryClick 
+}: { 
+  reference: MemoryReference; 
+  onMemoryClick?: (memoryRef: MemoryReference) => void; 
+}) {
+  const handleClick = () => {
+    if (onMemoryClick) {
+      onMemoryClick(reference);
+    }
+  };
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <button
-          type="button"
-          className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-muted hover:bg-muted/80 rounded border transition-colors"
-        >
-          <span className="w-1.5 h-1.5 bg-primary rounded-full" />
-          {reference.title}
-        </button>
-      </SheetTrigger>
-      <SheetContent className="w-full max-w-md sm:max-w-lg mr-4 mt-4 mb-4 rounded-l-lg shadow-lg">
-        <SheetHeader>
-          <SheetTitle className="text-left">Memory Details</SheetTitle>
-        </SheetHeader>
-        <div className="m-4 space-y-4">
-          <div>
-            <h3 className="font-medium text-sm text-muted-foreground mb-2">
-              Title
-            </h3>
-            <p className="text-sm">
-              {memory.metadata.title || "Untitled Memory"}
-            </p>
-          </div>
-
-          <div>
-            <h3 className="font-medium text-sm text-muted-foreground mb-2">
-              Content
-            </h3>
-            <p className="text-sm leading-relaxed">{memory.content}</p>
-          </div>
-
-          {memory.metadata.tags && memory.metadata.tags.length > 0 && (
-            <div>
-              <h3 className="font-medium text-sm text-muted-foreground mb-2">
-                Tags
-              </h3>
-              <div className="flex flex-wrap gap-1">
-                {memory.metadata.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="text-xs">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div>
-            <h3 className="font-medium text-sm text-muted-foreground mb-2">
-              Created
-            </h3>
-            <p className="text-sm">
-              {formatDistance(memory.createdAt, new Date(), {
-                addSuffix: true,
-              })}
-            </p>
-          </div>
-
-          {memory.metadata.source && (
-            <div>
-              <h3 className="font-medium text-sm text-muted-foreground mb-2">
-                Source
-              </h3>
-              <p className="text-xs text-muted-foreground capitalize">
-                {memory.metadata.source.replace(/_/g, " ")}
-              </p>
-            </div>
-          )}
-        </div>
-      </SheetContent>
-    </Sheet>
+    <button
+      type="button"
+      onClick={handleClick}
+      className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-muted hover:bg-muted/80 rounded border transition-colors"
+    >
+      <span className="w-1.5 h-1.5 bg-primary rounded-full" />
+      {reference.title}
+    </button>
   );
 }
 
 // Message Component
-function ChatMessage({ message }: { message: Message }) {
+function ChatMessage({ message, onMemoryClick }: { message: Message; onMemoryClick?: (memoryRef: MemoryReference) => void }) {
   const isUser = message.type === "user";
 
   return (
@@ -281,9 +222,10 @@ function ChatMessage({ message }: { message: Message }) {
             <div className="mt-3 pt-3 border-t border-border/50">
               <div className="flex flex-wrap gap-2">
                 {message.memoryReferences.map((reference) => (
-                  <MemoryReferenceSheet
+                  <MemoryReferenceButton
                     key={reference.id}
                     reference={reference}
+                    onMemoryClick={onMemoryClick}
                   />
                 ))}
               </div>
@@ -300,8 +242,12 @@ function ChatMessage({ message }: { message: Message }) {
   );
 }
 
+interface ChatInterfaceProps {
+  onMemoryClick?: (memoryRef: MemoryReference) => void;
+}
+
 // Main Chat Interface Component
-export function ChatInterface() {
+export function ChatInterface({ onMemoryClick }: ChatInterfaceProps = {}) {
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -312,7 +258,7 @@ export function ChatInterface() {
     <div className="w-full sm:max-w-[800px] sm:mx-auto sm:px-4">
       <div className="space-y-6">
         {mockMessages.map((message) => (
-          <ChatMessage key={message.id} message={message} />
+          <ChatMessage key={message.id} message={message} onMemoryClick={onMemoryClick} />
         ))}
         <div ref={messagesEndRef} />
       </div>
