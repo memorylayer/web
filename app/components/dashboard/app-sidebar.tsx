@@ -43,8 +43,8 @@ const data = {
       icon: BrainIcon,
     },
     {
-      title: "Memory Lane",
-      url: "/dashboard/memory-lane",
+      title: "Memory Chat",
+      url: "/dashboard/chats/new",
       icon: ChatIcon,
     },
     {

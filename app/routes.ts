@@ -16,7 +16,8 @@ export default [
   // Dashboard
   route("dashboard", "routes/dashboard/index.tsx"),
   route("dashboard/memories", "routes/dashboard/memories.tsx"),
-  route("dashboard/memory-lane", "routes/dashboard/memory-lane.tsx"),
+  route("dashboard/chats/new", "routes/dashboard/chats/new.tsx"),
+  route("dashboard/chats/:id", "routes/dashboard/chats/id.tsx"),
   route("dashboard/memory-graph", "routes/dashboard/memory-graph.tsx"),
   route("dashboard/memory-usage", "routes/dashboard/memory-usage.tsx"),
 ] satisfies RouteConfig;

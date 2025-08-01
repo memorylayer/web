@@ -10,7 +10,7 @@ export default function MemoryLanePage() {
   };
 
   return (
-    <DashboardLayout title="Memory Lane">
+    <DashboardLayout title="Memory Chat">
       <div className="flex flex-col h-full relative">
         {/* Chat Messages Area */}
         <div className="flex-1 overflow-y-auto">
@@ -18,7 +18,7 @@ export default function MemoryLanePage() {
             <ChatInterface onMemoryClick={showMemoryDetail} />
           </div>
         </div>
-        
+
         {/* Chat Sidebar */}
         <ChatSidebar />
       </div>
