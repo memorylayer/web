@@ -14,6 +14,7 @@ export interface MemoryReference {
   id: string;
   title: string;
   memory: Memory;
+  memoryType: "saved" | "used";
 }
 
 export type SidebarView = "chat-history" | "memory-detail"

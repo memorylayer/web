@@ -22,6 +22,7 @@ interface MemoryReference {
   id: string;
   title: string;
   memory: Memory;
+  memoryType: "saved" | "used";
 }
 
 interface Message {
@@ -87,6 +88,23 @@ const mockMessages: Message[] = [
     content:
       "I'm planning a team lunch for next week. Can you help me remember everyone's dietary preferences?",
     timestamp: new Date("2024-01-21T09:00:00"),
+    memoryReferences: [
+      {
+        id: "ref_user_1",
+        title: "Team Lunch Planning Request",
+        memory: {
+          id: "mem_user_1",
+          content: "User is planning a team lunch for next week and wants to remember everyone's dietary preferences.",
+          metadata: {
+            title: "Team Lunch Planning Request",
+            tags: ["team", "lunch", "planning"],
+            source: "user_message",
+          },
+          createdAt: new Date("2024-01-21T09:00:00"),
+        },
+        memoryType: "saved",
+      },
+    ],
   },
   {
     id: "msg_2",
@@ -99,11 +117,28 @@ const mockMessages: Message[] = [
         id: "ref_1",
         title: "John's Dietary Restrictions",
         memory: mockMemories[0],
+        memoryType: "used",
       },
       {
         id: "ref_2",
         title: "Sarah's Food Preferences",
         memory: mockMemories[2],
+        memoryType: "used",
+      },
+      {
+        id: "ref_ai_1",
+        title: "Team Lunch Dietary Summary",
+        memory: {
+          id: "mem_ai_1",
+          content: "Summary of team dietary preferences: John has peanut allergy and prefers Mediterranean/organic food. Sarah is lactose intolerant but can handle aged cheeses, loves Mediterranean, reducing gluten.",
+          metadata: {
+            title: "Team Lunch Dietary Summary",
+            tags: ["team", "dietary", "summary"],
+            source: "ai_response",
+          },
+          createdAt: new Date("2024-01-21T09:01:30"),
+        },
+        memoryType: "saved",
       },
     ],
   },
@@ -113,6 +148,23 @@ const mockMessages: Message[] = [
     content:
       "Perfect! Also, can you remind me about our IT support policies? I need to set expectations for the new team member.",
     timestamp: new Date("2024-01-21T09:05:00"),
+    memoryReferences: [
+      {
+        id: "ref_user_2",
+        title: "IT Support Policy Request",
+        memory: {
+          id: "mem_user_2",
+          content: "User needs information about IT support policies to set expectations for a new team member.",
+          metadata: {
+            title: "IT Support Policy Request",
+            tags: ["IT", "support", "policies", "new_member"],
+            source: "user_message",
+          },
+          createdAt: new Date("2024-01-21T09:05:00"),
+        },
+        memoryType: "saved",
+      },
+    ],
   },
   {
     id: "msg_4",
@@ -125,11 +177,28 @@ const mockMessages: Message[] = [
         id: "ref_3",
         title: "IT Support Response Times",
         memory: mockMemories[1],
+        memoryType: "used",
       },
       {
         id: "ref_4",
         title: "VPN Troubleshooting Steps",
         memory: mockMemories[3],
+        memoryType: "used",
+      },
+      {
+        id: "ref_ai_2",
+        title: "IT Support Guidelines Summary",
+        memory: {
+          id: "mem_ai_2",
+          content: "Comprehensive IT support guidelines for new team members including SLA requirements, escalation procedures, and common troubleshooting steps.",
+          metadata: {
+            title: "IT Support Guidelines Summary",
+            tags: ["IT", "support", "guidelines", "onboarding"],
+            source: "ai_response",
+          },
+          createdAt: new Date("2024-01-21T09:06:45"),
+        },
+        memoryType: "saved",
       },
     ],
   },
@@ -139,6 +208,23 @@ const mockMessages: Message[] = [
     content:
       "Thanks! That's really helpful. One more thing - what was that backup VPN server address again?",
     timestamp: new Date("2024-01-21T09:10:00"),
+    memoryReferences: [
+      {
+        id: "ref_user_3",
+        title: "VPN Server Address Query",
+        memory: {
+          id: "mem_user_3",
+          content: "User is asking for the backup VPN server address for reference.",
+          metadata: {
+            title: "VPN Server Address Query",
+            tags: ["VPN", "server", "backup", "address"],
+            source: "user_message",
+          },
+          createdAt: new Date("2024-01-21T09:10:00"),
+        },
+        memoryType: "saved",
+      },
+    ],
   },
   {
     id: "msg_6",
@@ -151,6 +237,22 @@ const mockMessages: Message[] = [
         id: "ref_5",
         title: "VPN Troubleshooting Steps",
         memory: mockMemories[3],
+        memoryType: "used",
+      },
+      {
+        id: "ref_ai_3",
+        title: "VPN Backup Server Info",
+        memory: {
+          id: "mem_ai_3",
+          content: "Backup VPN server address is vpn-backup.company.com, used as first troubleshooting step for VPN connection issues.",
+          metadata: {
+            title: "VPN Backup Server Info",
+            tags: ["VPN", "backup", "server", "troubleshooting"],
+            source: "ai_response",
+          },
+          createdAt: new Date("2024-01-21T09:10:15"),
+        },
+        memoryType: "saved",
       },
     ],
   },
@@ -170,13 +272,15 @@ function MemoryReferenceButton({
     }
   };
 
+  const dotColor = reference.memoryType === "saved" ? "bg-green-400" : "bg-sky-400";
+
   return (
     <button
       type="button"
       onClick={handleClick}
-      className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-muted hover:bg-muted/80 rounded border transition-colors"
+      className="inline-flex items-center gap-1.5 px-2 py-1 text-xs bg-muted hover:bg-muted/80 rounded border transition-colors"
     >
-      <span className="w-1.5 h-1.5 bg-primary rounded-full" />
+      <div className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
       {reference.title}
     </button>
   );
