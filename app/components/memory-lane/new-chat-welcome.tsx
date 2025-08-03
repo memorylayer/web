@@ -81,10 +81,10 @@ export function NewChatWelcome({ onPromptClick }: NewChatWelcomeProps) {
   };
 
   return (
-    <div className="w-full sm:max-w-[800px] sm:mx-auto sm:px-4">
+    <div className="w-full">
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
         {/* Suggested Prompts */}
-        <div className="w-full space-y-6">
+        <div className="w-full max-w-[800px] mx-auto px-4 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {suggestedPrompts.map((prompt) => {
               const IconComponent = prompt.icon;
@@ -120,10 +120,12 @@ export function NewChatWelcome({ onPromptClick }: NewChatWelcomeProps) {
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center space-y-3 pt-6">
-          <p className="text-sm text-muted-foreground">
-            Or start typing in the input below to ask your own question
-          </p>
+        <div className="w-full max-w-[800px] mx-auto px-4">
+          <div className="text-center space-y-3 pt-6">
+            <p className="text-sm text-muted-foreground">
+              Or start typing in the input below to ask your own question
+            </p>
+          </div>
         </div>
       </div>
     </div>

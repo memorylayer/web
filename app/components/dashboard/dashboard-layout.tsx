@@ -36,12 +36,12 @@ export function DashboardLayout({
     async (message: string = inputValue) => {
       if (!message.trim()) return;
 
-      const isOnMemoryLane = location.pathname === "/dashboard/memory-lane";
+      const isOnMemoryLane = location.pathname === "/dashboard/chats/new";
 
       if (!isOnMemoryLane) {
         // Store input and redirect to memory lane
         localStorage.setItem("ai-chat-input", message.trim());
-        navigate("/dashboard/memory-lane");
+        navigate("/dashboard/chats/new");
         return;
       }
 
@@ -67,7 +67,7 @@ export function DashboardLayout({
   // Check for stored input when component mounts
   useEffect(() => {
     const storedInput = localStorage.getItem("ai-chat-input");
-    if (storedInput && location.pathname === "/dashboard/memory-lane") {
+    if (storedInput && location.pathname === "/dashboard/chats/new") {
       setInputValue(storedInput);
       localStorage.removeItem("ai-chat-input");
       // Auto-submit the stored input
