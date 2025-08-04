@@ -1,6 +1,7 @@
 {
   "defaultOpen": true,
   "pages": [
+    "ai-sdk",
     "memories"
   ]
 } 

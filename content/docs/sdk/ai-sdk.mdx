@@ -1,0 +1,400 @@
+---
+title: "Vercel AI SDK"
+---
+
+MemoryLayer provides seamless integration with [Vercel's AI SDK](https://sdk.vercel.ai/docs), automatically enhancing your AI applications with persistent memory and contextual responses.
+
+## Migration Guide
+
+### Before: Regular AI SDK
+```typescript
+import { generateText } from 'ai';
+import { openai } from '@ai-sdk/openai';
+
+const { text } = await generateText({
+  model: openai('gpt-4'),
+  prompt: 'What did we discuss about the Q4 roadmap?'
+});
+```
+
+### After: Memory Layer AI SDK
+> It's memory enhanced AI SDK, to say the least.
+
+```typescript
+import { generateText } from 'ai';
+import { openai } from '@ai-sdk/openai';
+import { createMemoryLayer } from '@memorylayer/sdk';
+
+// Create Memory Layer provider
+const memoryLayer = createMemoryLayer({
+  apiKey: process.env.MEMORYLAYER_API_KEY,
+  layerId: 'my-project-layer'
+});
+
+const { text } = await generateText({
+  model: memoryLayer(openai('gpt-4')), // Just wrap your provider
+  prompt: 'What did we discuss about the Q4 roadmap?'
+});
+```
+
+**That's it!** Your AI now has access to relevant memories and automatically saves important interactions.
+
+## Installation
+
+```bash
+npm install @memorylayer/sdk
+```
+
+## Configuration
+
+### Required Configuration
+
+```typescript
+interface MemoryLayerConfig {
+  layerId: string;           // Required: Your project layer ID
+  apiKey?: string;           // Optional: Defaults to MEMORYLAYER_API_KEY env var
+  baseUrl?: string;          // Optional: Custom API endpoint
+  contextWindow?: number;    // Optional: Max tokens for memory context (default: 500)
+  autoSaveConversations?: boolean; // Optional: Auto-save interactions (default: true)
+}
+```
+
+### Basic Setup
+
+```typescript
+import { createMemoryLayer } from '@memorylayer/sdk';
+
+const memoryLayer = createMemoryLayer({
+  layerId: 'customer-support-bot',
+  contextWindow: 400,
+  autoSaveConversations: true
+});
+```
+
+## Supported AI SDK Functions
+
+MemoryLayer enhances **all** Vercel AI SDK functions without requiring any code changes:
+
+### Text Generation
+
+```typescript
+import { generateText, streamText } from 'ai';
+import { openai } from '@ai-sdk/openai';
+
+const memoryLayer = createMemoryLayer({ layerId: 'my-layer' });
+
+// Enhanced text generation
+const { text } = await generateText({
+  model: memoryLayer(openai('gpt-4')),
+  prompt: 'Summarize our previous meetings'
+});
+
+// Enhanced streaming
+const { textStream } = await streamText({
+  model: memoryLayer(openai('gpt-4')),
+  messages: conversationHistory
+});
+```
+
+### Object Generation
+
+```typescript
+import { generateObject, streamObject } from 'ai';
+import { z } from 'zod';
+
+// Enhanced structured output
+const { object } = await generateObject({
+  model: memoryLayer(openai('gpt-4')),
+  schema: z.object({
+    tasks: z.array(z.object({
+      title: z.string(),
+      priority: z.enum(['high', 'medium', 'low'])
+    }))
+  }),
+  prompt: 'Create a task list based on our project discussions'
+});
+
+// Enhanced streaming objects
+const { partialObjectStream } = await streamObject({
+  model: memoryLayer(openai('gpt-4')),
+  schema: reportSchema,
+  prompt: 'Generate our quarterly report'
+});
+```
+
+### Tool Calling
+
+```typescript
+import { generateText, tool } from 'ai';
+
+const result = await generateText({
+  model: memoryLayer(openai('gpt-4')),
+  tools: {
+    searchDocs: tool({
+      description: 'Search through documentation',
+      parameters: z.object({
+        query: z.string()
+      }),
+      execute: async ({ query }) => {
+        return await searchDocumentation(query);
+      }
+    })
+  },
+  prompt: 'Help me find information about our API'
+});
+```
+
+## Supported AI Providers
+
+MemoryLayer works with **all** [Vercel AI SDK providers](https://sdk.vercel.ai/providers):
+
+### OpenAI
+```typescript
+import { openai } from '@ai-sdk/openai';
+
+const enhanced = memoryLayer(openai('gpt-4'));
+const enhancedMini = memoryLayer(openai('gpt-4o-mini'));
+```
+
+### Anthropic
+```typescript
+import { anthropic } from '@ai-sdk/anthropic';
+
+const enhanced = memoryLayer(anthropic('claude-3-5-sonnet-20241022'));
+const enhancedHaiku = memoryLayer(anthropic('claude-3-haiku-20240307'));
+```
+
+### Google
+```typescript
+import { google } from '@ai-sdk/google';
+
+const enhanced = memoryLayer(google('models/gemini-1.5-pro-latest'));
+```
+
+### Other Providers
+```typescript
+import { cohere } from '@ai-sdk/cohere';
+import { mistral } from '@ai-sdk/mistral';
+
+const enhancedCohere = memoryLayer(cohere('command-r-plus'));
+const enhancedMistral = memoryLayer(mistral('mistral-large-latest'));
+```
+
+For the complete list of supported models, see the [AI SDK Providers documentation](https://sdk.vercel.ai/providers).
+
+## How Memory Enhancement Works
+
+MemoryLayer automatically enhances your prompts with relevant memories:
+
+### Before Enhancement
+```typescript
+const prompt = "What's our current pricing strategy?";
+```
+
+### After Enhancement
+```typescript
+const enhancedPrompt = `Based on your saved memories:
+
+[Memory 1 - 2 days ago] Discussed tiered pricing: Basic $29, Pro $99, Enterprise $299
+[Memory 2 - 1 week ago] Competitor analysis showed we're 15% higher than average
+[Memory 3 - 2 weeks ago] Customer feedback: price is main objection for SMBs
+
+Use these memories to provide accurate, contextual responses.
+
+User Query: What's our current pricing strategy?`;
+```
+
+## Advanced Configuration
+
+### Context Control
+
+```typescript
+// Limit memory context for faster responses
+const fastML = createMemoryLayer({
+  layerId: 'quick-responses',
+  contextWindow: 200,  // Fewer tokens for memory context
+});
+
+// Detailed context for complex queries
+const detailedML = createMemoryLayer({
+  layerId: 'detailed-analysis',
+  contextWindow: 800,  // More memory context
+});
+```
+
+### Conversation Management
+
+```typescript
+// Disable auto-saving for casual interactions
+const casualML = createMemoryLayer({
+  layerId: 'casual-chat',
+  autoSaveConversations: false
+});
+
+// Always save important conversations
+const importantML = createMemoryLayer({
+  layerId: 'executive-briefings',
+  autoSaveConversations: true
+});
+```
+
+## Performance Considerations
+
+### Memory Retrieval Impact
+- **Latency**: Adds ~50-100ms for memory search
+- **Token Usage**: Memory context uses ~200-500 tokens
+- **Automatic Optimization**: Frequently accessed memories are cached
+
+### Optimization Tips
+
+```typescript
+// For high-frequency, simple queries
+const quickML = createMemoryLayer({
+  layerId: 'quick-help',
+  contextWindow: 100,  // Minimal context
+});
+
+// For complex, analytical tasks
+const analyticalML = createMemoryLayer({
+  layerId: 'data-analysis',
+  contextWindow: 600,  // Rich context
+});
+```
+
+## Common Use Cases
+
+### Customer Support Bot
+
+```typescript
+const supportML = createMemoryLayer({
+  layerId: 'customer-support',
+  contextWindow: 400
+});
+
+const response = await generateText({
+  model: supportML(openai('gpt-4')),
+  prompt: `Customer question: ${customerMessage}`
+});
+```
+
+### Document Q&A
+
+```typescript
+const docsML = createMemoryLayer({
+  layerId: 'documentation-qa',
+  contextWindow: 600
+});
+
+const answer = await generateText({
+  model: docsML(openai('gpt-4')),
+  prompt: `Based on our documentation, ${userQuestion}`
+});
+```
+
+### Meeting Notes Assistant
+
+```typescript
+const meetingML = createMemoryLayer({
+  layerId: 'meeting-notes',
+  autoSaveConversations: true
+});
+
+const summary = await generateObject({
+  model: meetingML(openai('gpt-4')),
+  schema: meetingSummarySchema,
+  prompt: 'Summarize today\'s discussion and create action items'
+});
+```
+
+## Error Handling
+
+MemoryLayer includes graceful error handling - if memory operations fail, your AI calls continue using the base provider:
+
+```typescript
+// This will work even if MemoryLayer service is unavailable
+const response = await generateText({
+  model: memoryLayer(openai('gpt-4')), // Falls back to regular openai('gpt-4') on error
+  prompt: 'This request will always succeed'
+});
+```
+
+## Debugging
+
+### Verify Memory Enhancement
+
+Test with a question about previous interactions:
+
+```typescript
+// First interaction - create a memory
+await generateText({
+  model: memoryLayer(openai('gpt-4')),
+  prompt: 'Remember: my favorite color is blue'
+});
+
+// Second interaction - should reference the memory
+const response = await generateText({
+  model: memoryLayer(openai('gpt-4')),
+  prompt: 'What is my favorite color?'
+});
+
+console.log(response.text); // Should mention blue
+```
+
+### Configuration Validation
+
+```typescript
+const memoryLayer = createMemoryLayer({
+  layerId: 'test-layer',
+  // Verify your API key is set
+  apiKey: process.env.MEMORYLAYER_API_KEY || 'missing-api-key'
+});
+```
+
+## Best Practices
+
+### Layer Organization
+
+```typescript
+// Separate layers for different contexts
+const customerSupportML = createMemoryLayer({ layerId: 'customer-support' });
+const productDocsML = createMemoryLayer({ layerId: 'product-docs' });
+const teamNotesML = createMemoryLayer({ layerId: 'team-notes' });
+```
+
+### Context Window Sizing
+
+```typescript
+// Match context window to use case
+const chatbotML = createMemoryLayer({
+  layerId: 'chatbot',
+  contextWindow: 300  // Quick responses
+});
+
+const analystML = createMemoryLayer({
+  layerId: 'data-analyst', 
+  contextWindow: 700  // Detailed analysis
+});
+```
+
+## What's Different from Other Memory Solutions?
+
+- **Zero configuration** - Just wrap your provider
+- **Works with any AI SDK model** - OpenAI, Anthropic, Google, etc.
+- **Automatic context injection** - No manual prompt engineering
+- **Graceful degradation** - Continues working if memory service is down
+- **Built for production** - Optimized for speed and reliability
+
+## Next Steps
+
+- [Memory SDK](/docs/sdk/memories/get-memory) - Get memory
+- [REST API Reference](/docs/api) - API documentation  
+
+## References
+
+- [AI SDK Documentation](https://sdk.vercel.ai/docs) - Learn more about AI SDK capabilities
+- [AI SDK Model Providers](https://sdk.vercel.ai/providers) - Explore all supported AI SDK models
+
+## Need Help?
+
+- [GitHub Issues](https://github.com/memorylayer/memorylayer/issues) - Bug reports and feature requests
+- [Documentation](/docs) - Comprehensive guides and references
